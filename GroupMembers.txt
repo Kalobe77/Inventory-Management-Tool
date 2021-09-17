@@ -2,3 +2,4 @@ This file contains the names of all group members:
 Kaleb Gearinger
 Ben Goldstone
 Eli Coopersmith
+Adam Stefan
