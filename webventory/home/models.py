@@ -1,8 +1,9 @@
 from django.db import models
 
+
 # Create your models here.
 class Item(models.Model):
-    id = models.IntegerField.unique()
+    id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=100)
     quantity = models.IntegerField()
@@ -15,12 +16,13 @@ class User(models.Model):
     email = models.CharField(max_length=100)
     password = models.CharField(max_length=30)
 
+
 class ItemHistory(models.Model):
-    change = models.IntegerField()
-    date_of_change = models.DateField()
-    id = models.ForeignKey(
+    item_id = models.ForeignKey(
         Item,
         models.SET_NULL,
         blank=True,
         null=True,
     )
+    change = models.IntegerField()
+    date_of_change = models.DateField()

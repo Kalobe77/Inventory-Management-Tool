@@ -1,6 +1,5 @@
 # Django Model
 # Webventory
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 class Item(models.Model):
