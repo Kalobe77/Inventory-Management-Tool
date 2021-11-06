@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 # Create your models here.
 class Item(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
@@ -34,5 +35,6 @@ class ItemHistory(models.Model):
     date_of_change = models.DateField()
 
     def __str__(self):
-        return " ".join([str(self.item_id.name), "Change:", str(self.change), "on", str(self.date_of_change.month) + "/" + str(self.date_of_change.day) + "/" + str(self.date_of_change.year)])
-
+        return " ".join([str(self.item_id.name), "Change:", str(self.change), "on",
+                         str(self.date_of_change.month) + "/" + str(self.date_of_change.day) + "/" + str(
+                             self.date_of_change.year)])
