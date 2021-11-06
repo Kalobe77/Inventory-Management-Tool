@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class Item(models.Model):
@@ -14,13 +14,13 @@ class Item(models.Model):
         return str(self.name) + ' (' + str(self.id) + ')'
 
 
-class User(models.Model):
-    user_name = models.CharField(max_length=30)
+class User(AbstractUser):
+    username = models.CharField(max_length=30, unique=True)
     email = models.CharField(max_length=100)
     password = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.user_name
+        return self.username
 
 
 class ItemHistory(models.Model):
