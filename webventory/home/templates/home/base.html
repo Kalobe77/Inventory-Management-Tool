@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Import Google Icon Font-->
+    <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+    />
+    <!--Import materialize.css-->
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.js"></script>
+    <!--Custom Style Sheet-->
+    <link type="text/css" rel="stylesheet" href="css/style.css"/>
+    <title>Webventory</title>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+
+<body style="display: flex; min-height: 100vh;flex-direction: column;">
+<!--Navbar-->
+<!--Navbar-->
+<nav>
+    <div class="nav-wrapper container-fluid">
+        <a href="index.html" class="brand-logo center" style="padding-left: 2%"
+        >Webventory</a
+        >
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger"
+        ><em class="material-icons">menu</em></a
+        >
+        <ul class="left hide-on-med-and-down">
+            <li><a href="#">Login</a></li>
+            <li><a href="#">About Us</a></li>
+        </ul>
+    </div>
+</nav>
+
+<ul class="sidenav" id="mobile-demo">
+    <li><a href="#">Login</a></li>
+    <li><a href="#">About Us</a></li>
+</ul>
+<!--End Navbar-->
+<!--Main Content-->
+<main style="flex: 1 0 auto;">
+    {% block content%}
+    {% endblock %}
+</main>
+<!--End Content-->
+<!--Footer-->
+
+<footer class="page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col 12 offset-12 s15">
+                <h5 class="white-text">Links</h5>
+                <a class="grey-text text-lighten-3" href="#">Home</a>
+                <br/>
+                <br/>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container center">© 2021 Copyright</div>
+    </div>
+</footer>
+
+<!--End Footer-->
+<!--JavaScript at end of body for optimized loading-->
+<script type="text/javascript" src="js/materialize.min.js"></script>
+</body>
+</html>
