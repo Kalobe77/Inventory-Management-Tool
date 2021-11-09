@@ -4,6 +4,9 @@
     <!--Import Google Icon Font-->
     <link
             href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet">
+    <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
             rel="stylesheet"
     />
     <!--Import materialize.css-->
@@ -12,8 +15,6 @@
 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.js"></script>
-    <!--Custom Style Sheet-->
-    <link type="text/css" rel="stylesheet" href="css/style.css"/>
     <title>Webventory</title>
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -21,16 +22,24 @@
 
 <body style="display: flex; min-height: 100vh;flex-direction: column;">
 <!--Navbar-->
-<!--Navbar-->
 <nav>
     <div class="nav-wrapper container-fluid">
-        <a href="index.html" class="brand-logo center" style="padding-left: 2%">Webventory</a>
+        <a href="index.html" class="brand-logo center" style="padding-left: 2%"
+        >Webventory</a
+        >
         <a href="#" data-target="mobile-demo" class="sidenav-trigger"
-        ><em class="material-icons">menu</em></a>
+        ><em class="material-icons">menu</em></a
+        >
         <ul class="left hide-on-med-and-down">
-            <li><a href="/login">Login</a></li>
-            <li><a href="#">About Us</a></li>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Inventory</a></li>
+            <li><a href="#">Insights</a></li>
+            <li><a href="#">Users</a></li>
+            <li><a href="/logout">Log Out</a></li>
         </ul>
+        <h5 class="right" style="padding-right: 1%; padding-top: 0.125%">
+            Hello, {{username}}
+        </h5>
     </div>
 </nav>
 
