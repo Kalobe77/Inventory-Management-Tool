@@ -5,8 +5,8 @@ from django.contrib.auth import authenticate, login, logout
 
 
 # Create your views here.
-def base(request):
-    return render(request, 'home/base.html')
+def home(request):
+    return render(request, 'home/baseHome.html')
 
 
 def user_login(request):
@@ -22,7 +22,7 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect('/userHome')
         else:
-            return render(request, 'home/login.html', {"error": "Invalid Login!"})
+            return render(request, 'home/login.html', {"error": "Invalid Login! Please check your username and/or password."})
     return render(request, 'home/login.html')
 
 def user_logout(request):
@@ -31,4 +31,4 @@ def user_logout(request):
 
 @login_required(login_url='/login')
 def user_landing_page(request):
-    return render(request, 'home/userLandingPage.html', {"username": request.user})
+    return render(request, 'home/userHome.html', {"username": request.user})
