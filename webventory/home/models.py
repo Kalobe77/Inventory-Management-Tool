@@ -32,6 +32,9 @@ class ItemHistory(models.Model):
         null=True,
     )
     change = models.IntegerField()
+    #before = models.IntegerField()
+    #before = item_id.quantity
+    #item_id.quantity = item_id.quantity + change
     date_of_change = models.DateField()
 
     def __str__(self):
