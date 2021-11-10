@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
@@ -32,3 +32,7 @@ def user_logout(request):
 @login_required(login_url='/login')
 def user_landing_page(request):
     return render(request, 'home/userHome.html', {"username": request.user})
+
+@login_required(login_url='/login')
+def user_inventory(request):
+    return render(request, 'home/userHomeInventory.html', {"username": request.user})
