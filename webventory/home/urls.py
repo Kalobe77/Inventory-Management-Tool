@@ -22,4 +22,5 @@ urlpatterns = [
     path('userHome', views.user_landing_page),
     path('logout', views.user_logout),
     path('userInventory', views.user_inventory),
+    path('userInsights', views.user_insights)
 ]

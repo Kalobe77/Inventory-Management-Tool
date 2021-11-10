@@ -31,8 +31,12 @@ def user_logout(request):
 
 @login_required(login_url='/login')
 def user_landing_page(request):
-    return render(request, 'home/userHome.html', {"username": request.user})
+    return render(request, 'home/userHome.html', {"username": str(request.user).title()})
 
 @login_required(login_url='/login')
 def user_inventory(request):
-    return render(request, 'home/userHomeInventory.html', {"username": request.user})
+    return render(request, 'home/userHomeInventory.html', {"username": str(request.user).title()})
+
+login_required(login_url='/login')
+def user_insights(request):
+    return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title()})
