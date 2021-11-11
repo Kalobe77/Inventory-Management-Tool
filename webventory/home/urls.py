@@ -21,6 +21,7 @@ urlpatterns = [
     path('login', views.user_login),
     path('userHome', views.user_landing_page),
     path('logout', views.user_logout),
-    path('userInventory', views.user_inventory),
-    path('userInsights', views.user_insights)
+    path('userInventory/', views.user_inventory),
+    path('userInsights', views.user_insights),
+    path('userInventory/<int:item_id>/', views.user_inventory)
 ]

@@ -5,20 +5,34 @@
 
 <!-- Page Layout here -->
 <div class="row" style="padding-left : .5%;">
-    <div class="col s2">
-        <center>
+    <div class="container-fluid">
+        <div class="col s2 center">
             <ul class="grey lighten-1">
                 {% for item in items %}
-                <li class="" style="font-size : 25px; align : center;"> {{ item }}</li>
+                <a href="/userInventory/{{item.id}}">
+                    <li class="" style="font-size : 25px; align : center;"> {{ item }}</li>
+                </a>
                 {% endfor %}
             </ul>
-        </center>
+        </div>
     </div>
+    {%if item %}
+        <div class="col s5 center" style="padding-right : 5%">
 
-    <div class="col s7" background-color="teal">
-        <!-- Teal page content  -->
-    </div>
 
+            <h1 style="font-size: 100px"><i class="material-icons small" style="font-size : 50px">local_offer</i> {{item.name}}</h1>
+                <h3>Quantity: {{item.quantity}}</h3>
+                <h3>Price per {{item.name}}: ${{item.price}}</h3>
+            <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}</h4>
+
+
+        </div>
+        <div class="col s2 container">
+            <br>
+            <a href="#"><i class="material-icons medium black-text">edit</i></a>
+
+        </div>
+    {% endif %}
 </div>
 
 {% endblock %}

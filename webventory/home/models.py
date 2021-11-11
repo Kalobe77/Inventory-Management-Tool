@@ -12,7 +12,7 @@ class Item(models.Model):
     user_visability = models.CharField(max_length=30)
 
     def __str__(self):
-        return str(self.name) + ' (' + str(self.id) + ')'
+        return str(str(self.name).title()) + ' (' + str(self.id) + ')'
 
 
 class User(AbstractUser):
