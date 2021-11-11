@@ -15,4 +15,9 @@ body {
 main {
   flex: 1 0 auto;
 }
+
+li ul{
+    list-style-type: none;
+    list-style: none;
+}
 /*End Sicky Footer*/

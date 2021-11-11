@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-
+from .models import Item,ItemHistory
 
 # Create your views here.
 def home(request):
@@ -35,7 +35,8 @@ def user_landing_page(request):
 
 @login_required(login_url='/login')
 def user_inventory(request):
-    return render(request, 'home/userHomeInventory.html', {"username": str(request.user).title()})
+    items = Item.objects.all()
+    return render(request, 'home/userHomeInventory.html', {"username": str(request.user).title(), "items" : items})
 
 login_required(login_url='/login')
 def user_insights(request):
