@@ -8,7 +8,7 @@ class Item(models.Model):
     description = models.CharField(max_length=100)
     quantity = models.IntegerField()
     price = models.FloatField()
-    user_visability = models.CharField(max_length=30)
+    user_visibility = models.CharField(max_length=30)
 
 
 class User(models.Model):

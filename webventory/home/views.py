@@ -56,11 +56,11 @@ def user_inventory_edit(request, item_id=0):
         name = request.POST['name']
         description = request.POST['description']
         price = request.POST['price']
-        user_visability = request.POST['user_visability']
+        user_visibility = request.POST['user_visibility']
         item.name = name
         item.description = description
         item.price = price
-        item.user_visability = user_visability
+        item.user_visibility = user_visibility
         item.save()
         return HttpResponseRedirect('/userInventory')
     items = Item.objects.all()
