@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .models import Item, ItemHistory
+from .forms import ItemForm
 
 
 # Create your views here.
@@ -44,9 +45,17 @@ def user_inventory(request, item_id=0):
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         return render(request, 'home/userHomeInventory.html',
-                      {"username": str(request.user).title(), "items": items, "item": item})
+                      {"username": str(request.user).title(), "item": item})
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "items": items})
+
+
+@login_required(login_url='/login')
+def user_inventory_edit(request, item_id=0):
+    items = Item.objects.all()
+    item = Item.objects.get(id=item_id)
+    return render(request, 'home/userHomeInventoryEdit.html',
+                  {"username": str(request.user).title(), "item": item, "items": items, "form": ItemForm})
 
 
 @login_required(login_url='/login')

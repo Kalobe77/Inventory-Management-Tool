@@ -2,7 +2,7 @@
 {% block title %}{{username}}'s Inventory | Webventory{% endblock %}
 {% block content %}
 {% load static %}
-
+<link rel="stylesheet" href="{% static 'home/css/style.css' %}">
 <!-- Page Layout here -->
 <div class="row" style="padding-left : .5%;">
     <div class="container-fluid">
@@ -16,23 +16,17 @@
             </ul>
         </div>
     </div>
-    {%if item %}
-        <div class="col s5 center" style="padding-right : 5%">
+    <div class="container-fluid">
+        <div class="col s8 left" style="padding-left: 15%">
+            {% if form %}
+            <style>
+            p {font-size: 40px;}
 
-
-            <h1 style="font-size: 100px"><i class="material-icons small" style="font-size : 50px">local_offer</i> {{item.name}}</h1>
-                <h3>Quantity: {{item.quantity}}</h3>
-                <h3>Price per {{item.name}}: ${{item.price}}</h3>
-            <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}</h4>
-
-
+            </style>
+            {{form.as_table}}
+            {% endif %}
         </div>
-        <div class="col s2 container">
-            <br>
-            <a href="edit"><i class="material-icons medium black-text">edit</i></a>
-
-        </div>
-    {% endif %}
+    </div>
 </div>
 
 {% endblock %}

@@ -23,5 +23,6 @@ urlpatterns = [
     path('logout', views.user_logout),
     path('userInventory/', views.user_inventory),
     path('userInsights', views.user_insights),
-    path('userInventory/<int:item_id>/', views.user_inventory)
+    path('userInventory/<int:item_id>/', views.user_inventory),
+    path('userInventory/<int:item_id>/edit', views.user_inventory_edit)
 ]
