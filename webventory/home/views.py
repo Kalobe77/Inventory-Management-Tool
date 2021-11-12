@@ -44,7 +44,7 @@ def user_inventory(request, item_id=0):
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         return render(request, 'home/userHomeInventory.html',
-                      {"username": str(request.user).title(), "item": item})
+                      {"username": str(request.user).title(), "item": item, "items": items})
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "items": items})
 
@@ -64,10 +64,9 @@ def user_inventory_edit(request, item_id=0):
         item.save()
         return HttpResponseRedirect('/userInventory')
     items = Item.objects.all()
+    print(items)
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "form": ItemForm})
-
-    return render(request, 'home/login.html')
 
 
 @login_required(login_url='/login')
