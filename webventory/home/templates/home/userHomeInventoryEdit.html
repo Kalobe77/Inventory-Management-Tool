@@ -17,13 +17,39 @@
         </div>
     </div>
     <div class="container-fluid">
-        <div class="col s8 left" style="padding-left: 15%">
+        <div class="col s9 left" style="padding-left: 5%">
             {% if form %}
             <style>
-            p {font-size: 40px;}
+            label {font-size: 15px; color: black;}
+            p{font-size: 15px;}
+
+
+
+
+
 
             </style>
-            {{form.as_table}}
+
+            <form class="col s9" name="ItemEditForm" action="/userInventory/{{item.id}}/edit" method="post">
+                {% csrf_token %}
+                <p><label for="id_item">ID:</label>
+                    <input id="id_item" type="number" name="item" disabled value="{{item.id}}" required></p>
+                <p><label for="id_name">Name:</label>
+
+                    <input type="text" name="name" id="id_name" maxlength="30" value="{{item.name}}" required></p>
+                <p><label for="description">Description:</label>
+                    <input type="text" name="description" id="description" maxlength="100" value="{{item.description}}"
+                           required></p>
+                <p><label for="price">Price:</label>
+                    <input type="number" name="price" id="price" step="any" value="{{item.price}}" required></p>
+                <p><label for="user_visability">User Visability:</label>
+                    <input type="text" name="user_visability" id="user_visability"
+                           value="{{item.user_visability}}">
+                </p>
+                <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                    <i class="material-icons right">send</i>
+                </button>
+            </form>
             {% endif %}
         </div>
     </div>

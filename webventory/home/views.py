@@ -12,7 +12,6 @@ def home(request):
 
 
 def user_login(request):
-    username = password = ''
     if (request.user.is_authenticated):
         return HttpResponseRedirect('/userHome')
     if request.POST:
@@ -52,10 +51,23 @@ def user_inventory(request, item_id=0):
 
 @login_required(login_url='/login')
 def user_inventory_edit(request, item_id=0):
-    items = Item.objects.all()
     item = Item.objects.get(id=item_id)
+    if request.POST:
+        name = request.POST['name']
+        description = request.POST['description']
+        price = request.POST['price']
+        user_visability = request.POST['user_visability']
+        item.name = name
+        item.description = description
+        item.price = price
+        item.user_visability = user_visability
+        item.save()
+        return HttpResponseRedirect('/userInventory')
+    items = Item.objects.all()
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "form": ItemForm})
+
+    return render(request, 'home/login.html')
 
 
 @login_required(login_url='/login')
