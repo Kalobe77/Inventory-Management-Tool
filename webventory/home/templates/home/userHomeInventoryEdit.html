@@ -59,6 +59,8 @@
                 {% csrf_token %}
                 <p><label for="id_item">ID:</label>
                     <input id="id_item" type="number" name="item" disabled value="{{item.id}}" required></p>
+                <p><label for="id_quantity">Quantity:</label>
+                    <input id="id_quantity" type="number" name="quantity" value="{{item.quantity}}" required></p>
                 <p><label for="id_name">Name:</label>
                     <input type="text" name="name" id="id_name" maxlength="30" value="{{item.name}}" required></p>
                 <p><label for="description">Description:</label>

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -41,32 +43,36 @@ def user_landing_page(request):
 @login_required(login_url='/login')
 def user_inventory(request, item_id=0):
     items = Item.objects.all()
+    item = str()
+    itemHistory = str()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
-        return render(request, 'home/userHomeInventory.html',
-                      {"username": str(request.user).title(), "item": item, "items": items})
+        itemHistory = ItemHistory.objects.filter(item_id=item)
     return render(request, 'home/userHomeInventory.html',
-                  {"username": str(request.user).title(), "items": items})
+                  {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": itemHistory})
 
 
 @login_required(login_url='/login')
 def user_inventory_edit(request, item_id=0):
     item = Item.objects.get(id=item_id)
     if request.POST:
-        name = request.POST['name']
-        description = request.POST['description']
-        price = request.POST['price']
-        user_visibility = request.POST['user_visibility']
-        item.name = name
-        item.description = description
-        item.price = price
-        item.user_visibility = user_visibility
+        if ((request.POST['price'] != item.price) or (request.POST['quantity'] != item.quantity)):
+            newHistory = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
+                                     price_after=request.POST.get('price'), quantity_before=item.quantity,
+                                     quantity_after=request.POST.get('quantity'))
+            newHistory.save()
+        item.name = request.POST['name']
+        item.description = request.POST['description']
+        item.price = request.POST['price']
+        item.user_visibility = request.POST['user_visibility']
+        item.quantity = request.POST.get('quantity')
         item.save()
         return HttpResponseRedirect('/userInventory')
     items = Item.objects.all()
-    print(items)
+    itemHistory = ItemHistory.objects.filter(item_id=item)
     return render(request, 'home/userHomeInventoryEdit.html',
-                  {"username": str(request.user).title(), "item": item, "items": items, "form": ItemForm})
+                  {"username": str(request.user).title(), "item": item, "items": items, "form": ItemForm,
+                   "itemHistories": itemHistory})
 
 
 @login_required(login_url='/login')

@@ -35,11 +35,8 @@ class ItemHistory(models.Model):
     quantity_after = models.IntegerField()
     price_before = models.FloatField()
     price_after = models.FloatField()
-    #before = models.IntegerField()
-    #before = item_id.quantity
-    #item_id.quantity = item_id.quantity + change
-    date_of_change = models.DateField()
+    date_of_change = models.DateTimeField()
     def __str__(self):
-        return " ".join([str(self.item_id.name), "Change:", str(self.change), "on",
+        return " ".join([str(self.item_id.name), "Change:", str(self.quantity_after), "on",
                          str(self.date_of_change.month) + "/" + str(self.date_of_change.day) + "/" + str(
                              self.date_of_change.year)])

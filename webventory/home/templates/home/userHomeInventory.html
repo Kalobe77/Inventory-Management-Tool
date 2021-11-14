@@ -8,55 +8,83 @@
     <div class="container-fluid">
         <div class="col s5 center">
             <table id="myTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in items %}
-                        <tr>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                {{ item.id }}
-                            </a></td>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                {{ item.name }}
-                            </a></td>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                {{ item.description }}
-                            </a></td>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                {{ item.quantity }}
-                            </a></td>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                ${{ item.price|floatformat:2 }}
-                            </a></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                <tr>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        {{ item.id }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        {{ item.name }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        {{ item.description }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        {{ item.quantity }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        ${{ item.price|floatformat:2 }}
+                    </a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>
     {%if item %}
-        <div class="col s5 center" style="padding-right : 5%">
+    <div class="col s5 center" style="padding-right : 5%">
 
 
-            <h1 style="font-size: 100px"><i class="material-icons small" style="font-size : 50px">local_offer</i> {{item.name}}</h1>
-                <h3>Quantity: {{item.quantity}}</h3>
-                <h3>Price per {{item.name}}: ${{item.price|floatformat:2}}</h3>
-            <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}</h4>
+        <h1 style="font-size: 100px"><i class="material-icons small" style="font-size : 50px">local_offer</i>
+            {{item.name}}</h1>
+        <h3>Quantity: {{item.quantity}}</h3>
+        <h3>Price per {{item.name}}: ${{item.price|floatformat:2}}</h3>
+        <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}
+        </h4>
 
 
-        </div>
-        <div class="col s2 container">
-            <br>
-            <a href="edit"><i class="material-icons medium black-text">edit</i></a>
+    </div>
+    <div class="col s1 container">
+        <br>
+        <a href="edit"><i class="material-icons medium black-text">edit</i></a>
 
-        </div>
+    </div>
+    <div class="row s1 container left">
+            {% if itemHistories %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date and Time of Change</th>
+                        <th>Quantity Before</th>
+                        <th>Quantity After</th>
+                        <th>Price Before</th>
+                        <th>Price After</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for itemHistory in itemHistories %}
+                        <tr>
+                            <td>{{itemHistory.date_of_change}}</td>
+                            <td>{{itemHistory.quantity_before}}</td>
+                            <td>{{itemHistory.quantity_after}}</td>
+                            <td>{{itemHistory.price_before}}</td>
+                            <td>{{itemHistory.price_after}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+    </div>
     {% endif %}
 </div>
 
