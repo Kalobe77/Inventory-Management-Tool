@@ -33,7 +33,7 @@
                                 {{ item.quantity }}
                             </a></td>
                             <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                ${{ item.price }}
+                                ${{ item.price|floatformat:2 }}
                             </a></td>
                         </tr>
                     {% endfor %}
@@ -47,7 +47,7 @@
 
             <h1 style="font-size: 100px"><i class="material-icons small" style="font-size : 50px">local_offer</i> {{item.name}}</h1>
                 <h3>Quantity: {{item.quantity}}</h3>
-                <h3>Price per {{item.name}}: ${{item.price}}</h3>
+                <h3>Price per {{item.name}}: ${{item.price|floatformat:2}}</h3>
             <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}</h4>
 
 
