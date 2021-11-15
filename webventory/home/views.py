@@ -56,7 +56,7 @@ def user_inventory(request, item_id=0):
 def user_inventory_edit(request, item_id=0):
     item = Item.objects.get(id=item_id)
     if request.POST:
-        if ((request.POST['price'] != item.price) or (request.POST['quantity'] != item.quantity)):
+        if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
             newHistory = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
                                      price_after=request.POST.get('price'), quantity_before=item.quantity,
                                      quantity_after=request.POST.get('quantity'))
