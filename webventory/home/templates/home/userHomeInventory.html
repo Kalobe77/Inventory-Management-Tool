@@ -45,22 +45,20 @@
     <div class="col s5 center" style="padding-right : 5%">
 
 
-        <h1 style="font-size: 100px"><i class="material-icons small" style="font-size : 50px">local_offer</i>
+        <h1 style="font-size: 75px"><i class="material-icons small" style="font-size : 50px">local_offer</i>
             {{item.name}}</h1>
         <h3>Quantity: {{item.quantity}}</h3>
         <h3>Price per {{item.name}}: ${{item.price|floatformat:2}}</h3>
         <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}
         </h4>
-
-
     </div>
     <div class="col s1 container">
         <br>
         <a href="edit"><i class="material-icons medium black-text">edit</i></a>
 
     </div>
-    <div class="row s1 container left">
-            {% if itemHistories %}
+    <div class="row s1 container right">
+            <br>
             <table>
                 <thead>
                     <tr>
@@ -75,15 +73,24 @@
                     {% for itemHistory in itemHistories %}
                         <tr>
                             <td>{{itemHistory.date_of_change}}</td>
-                            <td>{{itemHistory.quantity_before}}</td>
-                            <td>{{itemHistory.quantity_after}}</td>
-                            <td>{{itemHistory.price_before}}</td>
-                            <td>{{itemHistory.price_after}}</td>
+                            {% if itemHistory.quantity_after != itemHistory.quantity_before %}
+                                <td>{{itemHistory.quantity_before}}</td>
+                                <td>{{itemHistory.quantity_after}}</td>
+                            {% else %}
+                                <td>No Change</td>
+                                <td>No Change</td>
+                            {% endif %}
+                            {% if itemHistory.price_after != itemHistory.price_before %}
+                                <td>${{itemHistory.price_before|floatformat:2}}</td>
+                                <td>${{itemHistory.price_after|floatformat:2}}</td>
+                            {% else %}
+                                <td>No Change</td>
+                                <td>No Change</td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            {% endif %}
     </div>
     {% endif %}
 </div>

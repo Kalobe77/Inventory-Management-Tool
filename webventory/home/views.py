@@ -5,15 +5,30 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .models import Item, ItemHistory
-from .forms import ItemForm
 
 
 # Create your views here.
 def home(request):
+    """Webventory Homepage
+
+    Args:
+        request ([type]): HTTP Request
+
+    Returns:
+        render: Homepage.
+    """
     return render(request, 'home/baseHome.html')
 
 
 def user_login(request):
+    """User Login page
+
+    Args:
+        request ([type]): HTTP Request
+
+    Returns:
+        [type]: login.html
+    """
     if (request.user.is_authenticated):
         return HttpResponseRedirect('/userHome')
     if request.POST:
@@ -31,17 +46,42 @@ def user_login(request):
 
 
 def user_logout(request):
+    """User Logout request.
+
+    Args:
+        request ([type]): HTTP Request.
+
+    Returns:
+        HttpResponseRedirect : baseHome.html
+    """
     logout(request)
     return HttpResponseRedirect('/')
 
 
 @login_required(login_url='/login')
 def user_landing_page(request):
+    """User Homepage
+
+    Args:
+        request ([type]): Http Request.
+
+    Returns:
+        [type]: userHome.html with username.
+    """
     return render(request, 'home/userHome.html', {"username": str(request.user).title()})
 
 
 @login_required(login_url='/login')
 def user_inventory(request, item_id=0):
+    """Inventory Home Page.
+
+    Args:
+        request ([type]): HTTP request.
+        item_id (int, optional): Item ID number, if specified. Defaults to 0.
+
+    Returns:
+        [type]: userHomeInventory.html with username, item, items, and itemHistory.
+    """
     items = Item.objects.all()
     item = str()
     itemHistory = str()
@@ -54,6 +94,16 @@ def user_inventory(request, item_id=0):
 
 @login_required(login_url='/login')
 def user_inventory_edit(request, item_id=0):
+    """Inventory edit page.
+
+    Args:
+        request ([type]): HTTP request.
+        item_id (int, optional): Item ID number, if specified. Defaults to 0.
+
+    Returns:
+        [type]: HTTPResponseRedirect to Inventory Home page if form submitted, 
+        otherwise, Renders Inventory Edit page.
+    """
     item = Item.objects.get(id=item_id)
     if request.POST:
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
@@ -71,10 +121,18 @@ def user_inventory_edit(request, item_id=0):
     items = Item.objects.all()
     itemHistory = ItemHistory.objects.filter(item_id=item)
     return render(request, 'home/userHomeInventoryEdit.html',
-                  {"username": str(request.user).title(), "item": item, "items": items, "form": ItemForm,
+                  {"username": str(request.user).title(), "item": item, "items": items,
                    "itemHistories": itemHistory})
 
 
 @login_required(login_url='/login')
 def user_insights(request):
+    """Inventory Insights Home page.
+
+    Args:
+        request ([type]): HTTP Request.
+
+    Returns:
+        [type]: userHomeInsights.html
+    """
     return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title()})
