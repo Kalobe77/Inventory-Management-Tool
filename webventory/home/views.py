@@ -82,12 +82,12 @@ def user_inventory(request, item_id=0):
     Returns:
         [type]: userHomeInventory.html with username, item, items, and itemHistory.
     """
-    items = Item.objects.all()
+    items = Item.objects.all().select_related()
     item = str()
     itemHistory = str()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
-        itemHistory = ItemHistory.objects.filter(item_id=item)
+        itemHistory = ItemHistory.objects.filter(item_id=item).select_related()
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": itemHistory})
 
@@ -118,7 +118,7 @@ def user_inventory_edit(request, item_id=0):
         item.quantity = request.POST.get('quantity')
         item.save()
         return HttpResponseRedirect('/userInventory')
-    items = Item.objects.all()
+    items = Item.objects.all().select_related()
     itemHistory = ItemHistory.objects.filter(item_id=item)
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items,
