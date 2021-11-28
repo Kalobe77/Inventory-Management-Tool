@@ -1,4 +1,4 @@
-import os
+7rt os
 from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
@@ -48,7 +48,7 @@ def user_login(request):
                           {"error": "Invalid Login! Please check your username and/or password."})
     return render(request, 'home/login.html')
 
-
+@login_required(login_url='/login')
 def user_logout(request):
     """User Logout request.
 
