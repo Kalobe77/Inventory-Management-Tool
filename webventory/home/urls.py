@@ -15,6 +15,7 @@ Including another URLconf
 """
 from . import views
 from django.urls import path
+
 urlpatterns = [
     # Home page.
     path('', views.home),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('userInventory/', views.user_inventory),
     # Inventory Insights page.
     path('userInsights', views.user_insights),
+    path('userInsights/<int:item_id>/', views.user_insights),
     # Specific Inventory Information given id number.
     path('userInventory/<int:item_id>/', views.user_inventory),
     # Edit Item in Inventory page.

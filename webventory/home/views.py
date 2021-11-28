@@ -1,9 +1,12 @@
+import os
 from datetime import datetime
 
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+
+from .figures import graph
 from .models import Item, ItemHistory
 
 
@@ -82,6 +85,9 @@ def user_inventory(request, item_id=0):
     Returns:
         [type]: userHomeInventory.html with username, item, items, and itemHistory.
     """
+    path = os.path.join(os.path.join(os.path.join(os.path.dirname(__file__), 'static'), 'home'), 'temp')
+    for file in os.listdir(path):
+        os.remove(file)
     items = Item.objects.all().select_related()
     item = str()
     itemHistory = str()
@@ -126,13 +132,34 @@ def user_inventory_edit(request, item_id=0):
 
 
 @login_required(login_url='/login')
-def user_insights(request):
+def user_insights(request, item_id=0):
     """Inventory Insights Home page.
 
     Args:
+        item_id: item id number.
         request ([type]): HTTP Request.
 
     Returns:
         [type]: userHomeInsights.html
     """
-    return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title()})
+    items = Item.objects.all().select_related()
+    if item_id != 0:
+        itemHistory = ItemHistory.objects.filter(item_id=Item.objects.get(id=item_id)).select_related()
+        price_graph = ''
+        quantity_graph = ''
+        if len(itemHistory) > 1:
+            date_change = [x.date_of_change.strftime('%m-%d %I:%M %p') for x in itemHistory if x.date_of_change]
+            price_graph = "home/temp/" + str(graph(
+                date_change,
+                ["".join(["$", f'{y.price_after:.2f}']) for y in itemHistory
+                 if y.price_after]))
+            quantity_graph = "home/temp/" + str(graph(
+                date_change,
+                [y.quantity_after for y in itemHistory if
+                 y.quantity_after]))
+        return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
+                                                              "items": items,
+                                                              "price_graph": price_graph,
+                                                              "quantity_graph": quantity_graph,
+                                                              "item": True})
+    return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(), "items": items})

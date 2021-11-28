@@ -1,5 +1,60 @@
 {% extends 'home/userHome.html' %}
 {% block title %}{{username}}'s Insights | Webventory{% endblock %}
 {% block content %}
+{
+<div class="row" style="padding-left : .5%;">
+    <div class="container-fluid">
+        <div class="col s5 center">
+            <table id="myTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                <tr>
+                    <td><a style="color: black" href="/userInsights/{{item.id}}">
+                        {{ item.id }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInsights/{{item.id}}">
+                        {{ item.name }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInsights/{{item.id}}">
+                        {{ item.description }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInsights/{{item.id}}">
+                        {{ item.quantity }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInsights/{{item.id}}">
+                        ${{ item.price|floatformat:2 }}
+                    </a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {%if item %}
+    <div class="col s3 center" style="padding-right : 5%">
+        {% load static %}
 
+        <h3>Price Graph</h3>
+        <!-- Gives alt Text Font Size -->
+        <span style="font-size: 30px; font-weight: bold;">
+            <img src="{% static price_graph %}" alt="No insights found yet!">
+        </span>
+
+        <h3>Quantity Graph</h3>
+        <!-- Gives alt Text Font Size -->
+        <span style="font-size: 30px; font-weight: bold;">
+            <img src="{% static quantity_graph %}" alt="No insights found yet!">
+        </span>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
