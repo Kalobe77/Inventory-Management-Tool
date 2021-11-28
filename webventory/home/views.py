@@ -85,7 +85,7 @@ def user_inventory(request, item_id=0):
     Returns:
         [type]: userHomeInventory.html with username, item, items, and itemHistory.
     """
-    path = os.path.join(os.path.join(os.path.join(os.path.dirname(__file__), 'static'), 'home'), 'temp')
+    path = os.path.join(os.path.dirname(__file__), 'static', 'home', 'temp')
     for file in os.listdir(path):
         os.remove(file)
     items = Item.objects.all().select_related()

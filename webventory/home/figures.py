@@ -7,7 +7,7 @@ def graph(x, y):
     ax.plot(x, y)
     ax.set(xlabel="Date")
     fig.autofmt_xdate()
-    path = os.path.join(os.path.join(os.path.join(os.path.dirname(__file__),"static"),"home"), "temp")
+    path = os.path.join(os.path.dirname(__file__),"static","home", "temp")
     os.chdir(path)
 
     filename = f'graph{random.randint(0,sys.maxsize)}.png'
