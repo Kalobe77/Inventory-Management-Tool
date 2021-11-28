@@ -1,4 +1,4 @@
-7rt os
+import os
 from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
