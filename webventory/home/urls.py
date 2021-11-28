@@ -35,7 +35,7 @@ urlpatterns = [
     # Specific Inventory Information given id number.
     path('userInventory/<int:item_id>/', views.user_inventory),
     # Edit Item in Inventory page.
-    path('userInventory/<int:item_id>/edit', views.user_inventory_edit)
+    path('userInventory/<int:item_id>/edit', views.user_inventory_edit),
     # Sign-up Page
     path('signup', views.user_signup)
 ]
