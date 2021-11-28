@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <!--Import Google Icon Font-->
+    <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet">
+    <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+    />
+    <!--Import materialize.css-->
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="{% static 'home/css/materialize.css' %}">
+    <!-- custom stylesheet -->
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+    <!-- Compiled and minified JavaScript -->
+    <script src="{% static 'home/js/materialize.js' %}"></script>
+
+    <title>Webventory Sign-up</title>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+            charset="UTF-8"
+    />
+</head>
+<body>
+<main>
+    <nav>
+        <div class="nav-wrapper container-fluid">
+            <a href="/" class="brand-logo center" style="padding-left: 2%">Webventory</a>
+        </div>
+    </nav>
+    <div id="login" class="container" style="padding : 5%;">
+        <form class="col s6" name="SignupForm" action="/signup" method="post">
+            {% csrf_token %}
+            {% if next %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+            {% endif %}
+            <div class="control-group">
+                <label class="control-label" for="username">Username</label>
+                <div class="controls">
+                    <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Username"
+                    />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="email">Email Address</label>
+                <div class="controls">
+                    <input
+                            type="text"
+                            id="email"
+                            name="email"
+                            placeholder="Email"
+                    />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="password">Password</label>
+                <div class="controls">
+                    <input
+                            pattern="^\S{6,}$"
+                            onchange="this.setCustomValidity(this.validity.patternMismatch ? 'Must have at least 6 characters' : ''); if(this.checkValidity()) form.password_confirm.pattern = this.value;"
+                            type="password"
+                            required="required"
+                            name="password"
+                            id="password"
+                            placeholder="Password"
+                    />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="password_confirm">Confirm Password</label>
+                <div class="controls">
+                    <input
+                            pattern="^\S{6,}$"
+                            onchange="this.setCustomValidity(this.validity.patternMismatch ? 'Please enter the same Password as above' : '');"
+                            type="password"
+                            required="required"
+                            name="password_confirm"
+                            id="password_confirm"
+                            placeholder="Confirm Password"
+
+                    />
+                    <script src="{% static 'home/js/passwordCheck.js' %}"></script>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="btn">Sign-Up</button>
+                    <br>
+
+                </div>
+                <strong><p class="red-text accent-1">{{error}}</p></strong>
+            </div>
+        </form>
+    </div>
+</main>
+<footer>
+
+</footer>
+</body>
+</html>
+
