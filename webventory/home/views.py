@@ -48,6 +48,7 @@ def user_login(request):
     return render(request, 'home/login.html')
 
 
+@login_required(login_url='/login')
 def user_logout(request):
     """User Logout request.
 
@@ -57,6 +58,7 @@ def user_logout(request):
     Returns:
         HttpResponseRedirect : baseHome.html
     """
+    clearGraphHistory(request.user)
     logout(request)
     return HttpResponseRedirect('/')
 
@@ -71,6 +73,7 @@ def user_landing_page(request):
     Returns:
         [type]: userHome.html with username.
     """
+    clearGraphHistory(request.user)
     return render(request, 'home/userHome.html', {"username": str(request.user).title()})
 
 
@@ -85,9 +88,7 @@ def user_inventory(request, item_id=0):
     Returns:
         [type]: userHomeInventory.html with username, item, items, and itemHistory.
     """
-    path = os.path.join(os.path.dirname(__file__), 'static', 'home', 'temp')
-    for file in os.listdir(path):
-        os.remove(file)
+    clearGraphHistory(request.user)
     items = Item.objects.all().select_related()
     item = str()
     itemHistory = str()
@@ -149,17 +150,25 @@ def user_insights(request, item_id=0):
         quantity_graph = ''
         if len(itemHistory) > 1:
             date_change = [x.date_of_change.strftime('%m-%d %I:%M %p') for x in itemHistory if x.date_of_change]
-            price_graph = "home/temp/" + str(graph(
+            price_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
                 ["".join(["$", f'{y.price_after:.2f}']) for y in itemHistory
-                 if y.price_after]))
-            quantity_graph = "home/temp/" + str(graph(
+                 if y.price_after], str(request.user)))
+            quantity_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
                 [y.quantity_after for y in itemHistory if
-                 y.quantity_after]))
+                 y.quantity_after], str(request.user)))
         return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
                                                               "items": items,
                                                               "price_graph": price_graph,
                                                               "quantity_graph": quantity_graph,
                                                               "item": True})
     return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(), "items": items})
+
+
+def clearGraphHistory(username):
+    path = os.path.join(os.path.dirname(__file__), 'static', 'home', 'temp', f'{username}')
+    if os.path.exists(path):
+        os.chdir(path)
+        for file in os.listdir(path):
+            os.remove(file)
