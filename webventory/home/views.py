@@ -5,9 +5,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.contrib.auth.hashers import make_password
 
 from .figures import graph
-from .models import Item, ItemHistory
+from .models import Item, ItemHistory, User
 
 
 # Create your views here.
@@ -60,6 +61,28 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+def user_signup(request):
+    username = password = email = ''
+    if request.POST:
+        username = request.POST['username']
+        email = request.POST['email']
+        password = make_password(request.POST['password'])
+        does_user_exist = User.objects.filter(username=username).exists()
+        does_email_exist = User.objects.filter(email=email).exists()
+        if does_user_exist and does_email_exist:
+            return render(request, 'home/signup.html',
+                          {"error": "Invalid Sign-up! Username and Email are already taken."})
+        elif does_user_exist:
+            return render(request, 'home/signup.html',
+                          {"error": "Invalid Sign-up! Username already taken."})
+        elif does_email_exist:
+            return render(request, 'home/signup.html',
+                          {"error": "Invalid Sign-up! Email already taken."})
+        else:
+            new_user = User(username=username, email=email, password=password)
+            new_user.save()
+            return HttpResponseRedirect('/home')
+    return render(request, 'home/signup.html')
 
 @login_required(login_url='/login')
 def user_landing_page(request):
