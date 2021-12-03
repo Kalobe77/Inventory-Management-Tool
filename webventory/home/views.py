@@ -3,12 +3,12 @@ from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib.auth.hashers import make_password
 
 from .figures import graph
-from .models import Item, ItemHistory,User
+from .models import Item, ItemHistory, User
 
 
 # Create your views here.
@@ -63,6 +63,7 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+
 def user_signup(request):
     username = password = email = ''
     if request.POST:
@@ -86,6 +87,7 @@ def user_signup(request):
             return HttpResponseRedirect('/home')
     return render(request, 'home/signup.html')
 
+
 @login_required(login_url='/login')
 def user_landing_page(request):
     """User Homepage
@@ -101,12 +103,38 @@ def user_landing_page(request):
 
 
 @login_required(login_url='/login')
-def user_inventory(request, item_id=0):
+def create_item(request):
     """Inventory Home Page.
 
     Args:
         request ([type]): HTTP request.
         item_id (int, optional): Item ID number, if specified. Defaults to 0.
+
+    Returns:
+        [type]: userHomeInventory.html with username, item, items, and itemHistory.
+    """
+    if request.POST:
+        item = Item.objects.create(
+            name=request.POST['name'],
+            description=request.POST['description'],
+            price=request.POST['price'],
+            user_visibility=request.POST['user_visibility'],
+            quantity=request.POST.get('quantity'))
+        item.save()
+        return HttpResponseRedirect('/userInventory')
+
+    clearGraphHistory(request.user)
+    items = Item.objects.all().select_related()
+    return render(request, 'home/userHomeInventoryCreate.html',
+                  {"username": str(request.user).title(), "items": items})
+
+
+@login_required(login_url='/login')
+def user_inventory(request, item_id=0):
+    """Creates an inventory item.
+
+    Args:
+        request ([type]): HTTP request.
 
     Returns:
         [type]: userHomeInventory.html with username, item, items, and itemHistory.

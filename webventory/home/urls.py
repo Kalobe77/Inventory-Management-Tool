@@ -37,5 +37,6 @@ urlpatterns = [
     # Edit Item in Inventory page.
     path('userInventory/<int:item_id>/edit', views.user_inventory_edit),
     # Sign-up Page
-    path('signup', views.user_signup)
+    path('signup', views.user_signup),
+    path('create', views.create_item),
 ]
