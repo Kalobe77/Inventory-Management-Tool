@@ -41,4 +41,7 @@ th, td {
 tr:nth-child(even) {
     background-color: #f2f2f2
 }
-/* End of Table */
+/* Webventory BG Color*/
+.wv-color{
+    background-color: #ee6e73
+}

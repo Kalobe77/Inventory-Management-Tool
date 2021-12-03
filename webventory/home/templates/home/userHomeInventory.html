@@ -2,7 +2,7 @@
 {% block title %}{{username}}'s Inventory | Webventory{% endblock %}
 {% block content %}
 {% load static %}
-
+<link rel="stylesheet" href="{% static 'home/css/style.css' %}">
 <!-- Page Layout here -->
 <div class="row" style="padding-left : .5%;">
     <div class="container-fluid">
@@ -54,43 +54,44 @@
     </div>
     <div class="col s1 container">
         <br>
-        <a href="edit"><i class="material-icons medium black-text">edit</i></a>
+        <a class="btn-floating btn-large hoverable wv-color" style="background-color: #ee6e73;" href="edit"><i
+                class="material-icons">edit</i></a>
 
     </div>
     <div class="row s1 container right">
-            <br>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date and Time of Change</th>
-                        <th>Quantity Before</th>
-                        <th>Quantity After</th>
-                        <th>Price Before</th>
-                        <th>Price After</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for itemHistory in itemHistories %}
-                        <tr>
-                            <td>{{itemHistory.date_of_change}}</td>
-                            {% if itemHistory.quantity_after != itemHistory.quantity_before %}
-                                <td>{{itemHistory.quantity_before}}</td>
-                                <td>{{itemHistory.quantity_after}}</td>
-                            {% else %}
-                                <td>No Change</td>
-                                <td>No Change</td>
-                            {% endif %}
-                            {% if itemHistory.price_after != itemHistory.price_before %}
-                                <td>${{itemHistory.price_before|floatformat:2}}</td>
-                                <td>${{itemHistory.price_after|floatformat:2}}</td>
-                            {% else %}
-                                <td>No Change</td>
-                                <td>No Change</td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <br>
+        <table>
+            <thead>
+            <tr>
+                <th>Date and Time of Change</th>
+                <th>Quantity Before</th>
+                <th>Quantity After</th>
+                <th>Price Before</th>
+                <th>Price After</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for itemHistory in itemHistories %}
+            <tr>
+                <td>{{itemHistory.date_of_change}}</td>
+                {% if itemHistory.quantity_after != itemHistory.quantity_before %}
+                <td>{{itemHistory.quantity_before}}</td>
+                <td>{{itemHistory.quantity_after}}</td>
+                {% else %}
+                <td>No Change</td>
+                <td>No Change</td>
+                {% endif %}
+                {% if itemHistory.price_after != itemHistory.price_before %}
+                <td>${{itemHistory.price_before|floatformat:2}}</td>
+                <td>${{itemHistory.price_after|floatformat:2}}</td>
+                {% else %}
+                <td>No Change</td>
+                <td>No Change</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
     {% endif %}
 </div>

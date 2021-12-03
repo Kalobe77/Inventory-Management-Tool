@@ -8,36 +8,36 @@
     <div class="container-fluid">
         <div class="col s5 center">
             <table id="myTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in items %}
-                        <tr>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                {{ item.id }}
-                            </a></td>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                {{ item.name }}
-                            </a></td>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                {{ item.description }}
-                            </a></td>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                {{ item.quantity }}
-                            </a></td>
-                            <td><a style="color: black" href="/userInventory/{{item.id}}">
-                                ${{ item.price }}
-                            </a></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                <tr>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        {{ item.id }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        {{ item.name }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        {{ item.description }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        {{ item.quantity }}
+                    </a></td>
+                    <td><a style="color: black" href="/userInventory/{{item.id}}">
+                        ${{ item.price }}
+                    </a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>
@@ -46,6 +46,7 @@
             <style>
             label {font-size: 15px; color: black;}
             p{font-size: 15px;}
+
 
 
 
@@ -71,8 +72,9 @@
                     <input type="text" name="user_visibility" id="user_visibility"
                            value="{{item.user_visibility}}">
                 </p>
-                <button class="btn waves-effect waves-light" type="submit" name="action">Submit
-                    <i class="material-icons right">send</i>
+                <button class="btn waves-effect waves-light hoverable" type="submit" name="action"><i
+                        class="material-icons left">save</i>Save Changes
+
                 </button>
             </form>
         </div>
