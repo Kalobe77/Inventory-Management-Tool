@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.utils.functional import cached_property
 
 from .figures import graph
 from .models import Item, ItemHistory, User
@@ -104,7 +103,6 @@ def user_landing_page(request):
 
 
 @login_required(login_url='/login')
-@cached_property
 def user_inventory(request, item_id=0):
     """Inventory Home Page.
 
@@ -160,7 +158,6 @@ def user_inventory_edit(request, item_id=0):
 
 
 @login_required(login_url='/login')
-@cached_property
 def user_insights(request, item_id=0):
     """Inventory Insights Home page.
 
