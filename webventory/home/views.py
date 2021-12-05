@@ -3,12 +3,13 @@ from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib.auth.hashers import make_password
+from django.utils.functional import cached_property
 
 from .figures import graph
-from .models import Item, ItemHistory,User
+from .models import Item, ItemHistory, User
 
 
 # Create your views here.
@@ -63,6 +64,7 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+
 def user_signup(request):
     username = password = email = ''
     if request.POST:
@@ -86,6 +88,7 @@ def user_signup(request):
             return HttpResponseRedirect('/home')
     return render(request, 'home/signup.html')
 
+
 @login_required(login_url='/login')
 def user_landing_page(request):
     """User Homepage
@@ -101,6 +104,7 @@ def user_landing_page(request):
 
 
 @login_required(login_url='/login')
+@cached_property
 def user_inventory(request, item_id=0):
     """Inventory Home Page.
 
@@ -156,6 +160,7 @@ def user_inventory_edit(request, item_id=0):
 
 
 @login_required(login_url='/login')
+@cached_property
 def user_insights(request, item_id=0):
     """Inventory Insights Home page.
 
