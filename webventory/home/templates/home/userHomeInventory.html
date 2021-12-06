@@ -7,6 +7,7 @@
 <div class="row" style="padding-left : .5%;">
     <div class="container-fluid">
         <div class="col s5 center">
+            <br>
             <table id="myTable">
                 <thead>
                 <tr>
@@ -40,27 +41,33 @@
                 </tbody>
             </table>
             <br>
-            <a class="btn-floating btn-large hoverable wv-color" style="background-color: #ee6e73;" href="/create"><i
-                    class="material-icons">add</i></a>
         </div>
     </div>
-    {%if item %}
     <div class="col s5 center" style="padding-right : 5%">
-
-
+        {%if item %}
         <h1 style="font-size: 75px"><i class="material-icons small" style="font-size : 50px">local_offer</i>
             {{item.name}}</h1>
         <h3>Quantity: {{item.quantity}}</h3>
         <h3>Price per {{item.name}}: ${{item.price|floatformat:2}}</h3>
         <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}
         </h4>
+        {% endif %}
     </div>
-    <div class="col s1 container">
-        <br>
-        <a class="btn-floating btn-large hoverable wv-color" style="background-color: #ee6e73;" href="edit"><i
-                class="material-icons">edit</i></a>
 
+    <div class="col s2 container center" style="padding-top:1%;">
+        <span>
+         <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+            href="/create"><i class="material-icons right">add</i>Add</a>
+         <br>
+         <br>
+         {% if item %}
+             <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+                href="edit"><i class="material-icons right">edit</i>Edit</a>
+         {% endif %}
+         </span>
+        <br>
     </div>
+    {% if item %}
     <div class="row s1 container right">
         <br>
         <table>
