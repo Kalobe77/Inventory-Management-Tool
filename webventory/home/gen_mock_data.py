@@ -1,6 +1,7 @@
 '''
 Generates Mock Data for testing purposes.
 run in django shell
+does not work
 "python webventory/manage.py shell webventory/home/gen_mock_data.py"
 '''
 
@@ -12,8 +13,8 @@ from models import Item, ItemHistory
 items = []
 # Generates Random Items
 for _ in range(100):
-    new_item = Item(name="test", description="this is a description", quantity=f'{random.randint(0, 1000)}',
-                    price=f'{random.random() * random.randint(0, 10):.2f}', user_visability='true')
+    new_item = Item(name="test", description="this is a description",
+                    quantity=f'{random.randint(0, 1000)}', price=f'{random.random() * random.randint(0, 10):.2f}', user_visability='true')
     new_item.save()
     items.append(new_item)
 # Generates Random Changes
