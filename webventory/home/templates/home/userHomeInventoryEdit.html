@@ -19,6 +19,7 @@
                 </thead>
                 <tbody>
                 {% for item in items %}
+                {% if item.user_visibility == user.username %}
                 <tr>
                     <td><a style="color: black" href="/userInventory/{{item.id}}">
                         {{ item.id }}
@@ -33,9 +34,10 @@
                         {{ item.quantity }}
                     </a></td>
                     <td><a style="color: black" href="/userInventory/{{item.id}}">
-                        ${{ item.price }}
+                        ${{ item.price|floatformat:2 }}
                     </a></td>
                 </tr>
+                {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
@@ -68,14 +70,11 @@
                            required></p>
                 <p><label for="price">Price:</label>
                     <input type="number" name="price" id="price" step="any" value="{{item.price}}" required></p>
-                <p><label for="user_visibility">User Visibility:</label>
-                    <input type="text" name="user_visibility" id="user_visibility"
-                           value="{{item.user_visibility}}">
                 </p>
                 <button class="btn waves-effect waves-light hoverable" type="submit" name="action"><i
                         class="material-icons left">save</i>Save Changes
-
                 </button>
+
             </form>
         </div>
     </div>

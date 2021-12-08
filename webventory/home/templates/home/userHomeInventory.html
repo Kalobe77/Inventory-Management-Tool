@@ -20,6 +20,7 @@
                 </thead>
                 <tbody>
                 {% for item in items %}
+                {% if item.user_visibility == user.username %}
                 <tr>
                     <td><a style="color: black" href="/userInventory/{{item.id}}">
                         {{ item.id }}
@@ -37,6 +38,7 @@
                         ${{ item.price|floatformat:2 }}
                     </a></td>
                 </tr>
+                {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
@@ -63,6 +65,10 @@
          {% if item %}
              <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
                 href="edit"><i class="material-icons right">edit</i>Edit</a>
+            <br>
+            <br>
+             <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+                href="delete"><i class="material-icons right">delete</i>Delete</a>
          {% endif %}
          </span>
         <br>

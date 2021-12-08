@@ -17,6 +17,7 @@
                 </thead>
                 <tbody>
                 {% for item in items %}
+                {% if item.user_visibility == user.username %}
                 <tr>
                     <td><a style="color: black" href="/userInsights/{{item.id}}">
                         {{ item.id }}
@@ -34,6 +35,7 @@
                         ${{ item.price|floatformat:2 }}
                     </a></td>
                 </tr>
+                {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
