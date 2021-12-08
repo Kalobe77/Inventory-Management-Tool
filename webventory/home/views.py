@@ -130,6 +130,30 @@ def create_item(request):
 
 
 @login_required(login_url='/login')
+def delete_item(request, item_id=0):
+    """Inventory Home Page.
+
+    Args:
+        request ([type]): HTTP request.
+        item_id (int, optional): Item ID number, if specified. Defaults to 0.
+
+    Returns:
+        [type]: userHomeInventory.html with username, item, items, and itemHistory.
+    """
+    does_item_exist = Item.objects.filter(id=item_id).exists()
+    does_item_history_exist = ItemHistory.objects.filter(item_id=item_id).exists()
+    if does_item_exist:
+        item_to_delete = Item.objects.get(id=item_id)
+        item_to_delete.delete()
+        if does_item_history_exist:
+            item_history_delete = ItemHistory.objects.filter(item_id=item_id)
+            item_history_delete.delete()
+        return HttpResponseRedirect('/userInventory')
+    else:
+        return HttpResponseRedirect('/userInventory')
+
+
+@login_required(login_url='/login')
 def user_inventory(request, item_id=0):
     """Creates an inventory item.
 
@@ -172,7 +196,6 @@ def user_inventory_edit(request, item_id=0):
         item.name = request.POST['name']
         item.description = request.POST['description']
         item.price = request.POST['price']
-        item.user_visibility = request.POST['user_visibility']
         item.quantity = request.POST.get('quantity')
         item.save()
         return HttpResponseRedirect('/userInventory')
