@@ -16,7 +16,7 @@ def home(request):
     """Webventory Homepage
 
     Args:
-        request (django.core.handlers.wsgi.WSGIRequest): HTTP Request
+        request ([type]): HTTP Request
 
     Returns:
         render: Homepage.
@@ -28,10 +28,10 @@ def user_login(request):
     """User Login page
 
     Args:
-        request (django.core.handlers.wsgi.WSGIRequest): HTTP Request
+        request ([type]): HTTP Request
 
     Returns:
-        type: login.html
+        [type]: login.html
     """
     if (request.user.is_authenticated):
         return HttpResponseRedirect('/userHome')
@@ -54,7 +54,7 @@ def user_logout(request):
     """User Logout request.
 
     Args:
-        request (django.core.handlers.wsgi.WSGIRequest): HTTP Request.
+        request ([type]): HTTP Request.
 
     Returns:
         HttpResponseRedirect : baseHome.html
@@ -65,14 +65,6 @@ def user_logout(request):
 
 
 def user_signup(request):
-    """User signup page.
-
-    Args:
-        request (django.core.handlers.wsgi.WSGIRequest): HTTP request.
-
-    Returns:
-        type: signup.html page.
-    """
     username = password = email = ''
     if request.POST:
         username = request.POST['username']
@@ -101,10 +93,10 @@ def user_landing_page(request):
     """User Homepage
 
     Args:
-        request (django.core.handlers.wsgi.WSGIRequest): Http Request.
+        request ([type]): Http Request.
 
     Returns:
-        type: userHome.html with username.
+        [type]: userHome.html with username.
     """
     clearGraphHistory(request.user)
     return render(request, 'home/userHome.html', {"username": str(request.user).title()})
@@ -115,11 +107,11 @@ def create_item(request):
     """Inventory Home Page.
 
     Args:
-        request (django.core.handlers.wsgi.WSGIRequest): HTTP request.
+        request ([type]): HTTP request.
         item_id (int, optional): Item ID number, if specified. Defaults to 0.
 
     Returns:
-        type: userHomeInventory.html with username, item, items, and itemHistory.
+        [type]: userHomeInventory.html with username, item, items, and itemHistory.
     """
     if request.POST:
         item = Item.objects.create(
@@ -142,10 +134,10 @@ def user_inventory(request, item_id=0):
     """Creates an inventory item.
 
     Args:
-        request (django.core.handlers.wsgi.WSGIRequest): HTTP request.
+        request ([type]): HTTP request.
 
     Returns:
-        type: userHomeInventory.html with username, item, items, and itemHistory.
+        [type]: userHomeInventory.html with username, item, items, and itemHistory.
     """
     clearGraphHistory(request.user)
     items = Item.objects.all().select_related()
@@ -163,11 +155,11 @@ def user_inventory_edit(request, item_id=0):
     """Inventory edit page.
 
     Args:
-        request (django.core.handlers.wsgi.WSGIRequest): HTTP request.
+        request ([type]): HTTP request.
         item_id (int, optional): Item ID number, if specified. Defaults to 0.
 
     Returns:
-        type: HTTPResponseRedirect to Inventory Home page if form submitted, 
+        [type]: HTTPResponseRedirect to Inventory Home page if form submitted,
         otherwise, Renders Inventory Edit page.
     """
     item = Item.objects.get(id=item_id)
@@ -197,20 +189,18 @@ def user_insights(request, item_id=0):
 
     Args:
         item_id: item id number.
-        request (django.core.handlers.wsgi.WSGIRequest): HTTP Request.
+        request ([type]): HTTP Request.
 
     Returns:
-        io.TextIOWrapper: userHomeInsights.html
+        [type]: userHomeInsights.html
     """
     items = Item.objects.all().select_related()
     if item_id != 0:
-        itemHistory = ItemHistory.objects.filter(
-            item_id=Item.objects.get(id=item_id)).select_related()
+        itemHistory = ItemHistory.objects.filter(item_id=Item.objects.get(id=item_id)).select_related()
         price_graph = ''
         quantity_graph = ''
         if len(itemHistory) > 1:
-            date_change = [x.date_of_change.strftime(
-                '%m-%d %I:%M %p') for x in itemHistory if x.date_of_change]
+            date_change = [x.date_of_change.strftime('%m-%d %I:%M %p') for x in itemHistory if x.date_of_change]
             price_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
                 ["".join(["$", f'{y.price_after:.2f}']) for y in itemHistory
@@ -228,14 +218,22 @@ def user_insights(request, item_id=0):
 
 
 def clearGraphHistory(username):
-    """Clears the history of the graphs given the user.
-
-    Args:
-        username (django.utils.functional.SimpleLazyObject): username of user currently logged in.
-    """
-    path = os.path.join(os.path.dirname(__file__), 'static',
-                        'home', 'temp', f'{username}')
+    path = os.path.join(os.path.dirname(__file__), 'static', 'home', 'temp', f'{username}')
     if os.path.exists(path):
         os.chdir(path)
         for file in os.listdir(path):
             os.remove(file)
+
+def delete_item(request, item_id=0):
+
+    does_item_exist = Item.objects.filter(id=item_id).exists()
+    does_item_history_exist = ItemHistory.objects.filter(item_id=item_id).exists()
+    if does_item_exist:
+        item_to_delete = Item.objects.filter(id=item_id)
+        item_to_delete.delete()
+        if does_item_history_exist:
+            item_history_delete = Item.objects.filter(item_id=item_id)
+            item_history_delete.delete()
+        return HttpResponseRedirect('/userInventory')
+    else:
+        return HttpResponseRedirect('/userInventory')
