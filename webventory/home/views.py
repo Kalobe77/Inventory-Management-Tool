@@ -9,7 +9,7 @@ from django.shortcuts import render
 
 from .figures import graph
 from .models import Item, ItemHistory, User
-
+USER_INVETNTORY = '/userInventory'
 
 # Create your views here.
 def home(request):
@@ -59,13 +59,14 @@ def user_logout(request):
     Returns:
         HttpResponseRedirect : baseHome.html
     """
-    clearGraphHistory(request.user)
+    clear_graph_history(request.user)
     logout(request)
     return HttpResponseRedirect('/')
 
 
 def user_signup(request):
     username = password = email = ''
+    SIGNUP_PAGE = 'home/signup.html'
     if request.POST:
         username = request.POST['username']
         email = request.POST['email']
@@ -73,19 +74,19 @@ def user_signup(request):
         does_user_exist = User.objects.filter(username=username).exists()
         does_email_exist = User.objects.filter(email=email).exists()
         if does_user_exist and does_email_exist:
-            return render(request, 'home/signup.html',
+            return render(request, SIGNUP_PAGE,
                           {"error": "Invalid Sign-up! Username and Email are already taken."})
         elif does_user_exist:
-            return render(request, 'home/signup.html',
+            return render(request, SIGNUP_PAGE,
                           {"error": "Invalid Sign-up! Username already taken."})
         elif does_email_exist:
-            return render(request, 'home/signup.html',
+            return render(request, SIGNUP_PAGE,
                           {"error": "Invalid Sign-up! Email already taken."})
         else:
             new_user = User(username=username, email=email, password=password)
             new_user.save()
             return HttpResponseRedirect('/home')
-    return render(request, 'home/signup.html')
+    return render(request, SIGNUP_PAGE)
 
 
 @login_required(login_url='/login')
@@ -98,7 +99,7 @@ def user_landing_page(request):
     Returns:
         [type]: userHome.html with username.
     """
-    clearGraphHistory(request.user)
+    clear_graph_history(request.user)
     return render(request, 'home/userHome.html', {"username": str(request.user).title()})
 
 
@@ -121,9 +122,9 @@ def create_item(request):
             user_visibility=request.POST['user_visibility'],
             quantity=request.POST.get('quantity'))
         item.save()
-        return HttpResponseRedirect('/userInventory')
+        return HttpResponseRedirect(USER_INVETNTORY)
 
-    clearGraphHistory(request.user)
+    clear_graph_history(request.user)
     items = Item.objects.all().select_related()
     return render(request, 'home/userHomeInventoryCreate.html',
                   {"username": str(request.user).title(), "items": items})
@@ -148,9 +149,9 @@ def delete_item(request, item_id=0):
         if does_item_history_exist:
             item_history_delete = ItemHistory.objects.filter(item_id=item_id)
             item_history_delete.delete()
-        return HttpResponseRedirect('/userInventory')
+        return HttpResponseRedirect(USER_INVETNTORY)
     else:
-        return HttpResponseRedirect('/userInventory')
+        return HttpResponseRedirect(USER_INVETNTORY)
 
 
 @login_required(login_url='/login')
@@ -161,17 +162,17 @@ def user_inventory(request, item_id=0):
         request ([type]): HTTP request.
 
     Returns:
-        [type]: userHomeInventory.html with username, item, items, and itemHistory.
+        [type]: userHomeInventory.html with username, item, items, and item_history.
     """
-    clearGraphHistory(request.user)
+    clear_graph_history(request.user)
     items = Item.objects.all().select_related()
     item = str()
-    itemHistory = str()
+    item_history = str()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
-        itemHistory = ItemHistory.objects.filter(item_id=item).select_related()
+        item_history = ItemHistory.objects.filter(item_id=item).select_related()
     return render(request, 'home/userHomeInventory.html',
-                  {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": itemHistory})
+                  {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history})
 
 
 @login_required(login_url='/login')
@@ -189,21 +190,21 @@ def user_inventory_edit(request, item_id=0):
     item = Item.objects.get(id=item_id)
     if request.POST:
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
-            newHistory = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
+            new_history = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
                                      price_after=request.POST.get('price'), quantity_before=item.quantity,
                                      quantity_after=request.POST.get('quantity'))
-            newHistory.save()
+            new_history.save()
         item.name = request.POST['name']
         item.description = request.POST['description']
         item.price = request.POST['price']
         item.quantity = request.POST.get('quantity')
         item.save()
-        return HttpResponseRedirect('/userInventory')
+        return HttpResponseRedirect(USER_INVETNTORY)
     items = Item.objects.all().select_related()
-    itemHistory = ItemHistory.objects.filter(item_id=item)
+    item_history = ItemHistory.objects.filter(item_id=item)
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items,
-                   "itemHistories": itemHistory})
+                   "itemHistories": item_history})
 
 
 @login_required(login_url='/login')
@@ -219,18 +220,18 @@ def user_insights(request, item_id=0):
     """
     items = Item.objects.all().select_related()
     if item_id != 0:
-        itemHistory = ItemHistory.objects.filter(item_id=Item.objects.get(id=item_id)).select_related()
+        item_history = ItemHistory.objects.filter(item_id=Item.objects.get(id=item_id)).select_related()
         price_graph = ''
         quantity_graph = ''
-        if len(itemHistory) > 1:
-            date_change = [x.date_of_change.strftime('%m-%d %I:%M %p') for x in itemHistory if x.date_of_change]
+        if len(item_history) > 1:
+            date_change = [x.date_of_change.strftime('%m-%d %I:%M %p') for x in item_history if x.date_of_change]
             price_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
-                ["".join(["$", f'{y.price_after:.2f}']) for y in itemHistory
+                ["".join(["$", f'{y.price_after:.2f}']) for y in item_history
                  if y.price_after], str(request.user)))
             quantity_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
-                [y.quantity_after for y in itemHistory if
+                [y.quantity_after for y in item_history if
                  y.quantity_after], str(request.user)))
         return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
                                                               "items": items,
@@ -240,7 +241,7 @@ def user_insights(request, item_id=0):
     return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(), "items": items})
 
 
-def clearGraphHistory(username):
+def clear_graph_history(username):
     path = os.path.join(os.path.dirname(__file__), 'static', 'home', 'temp', f'{username}')
     if os.path.exists(path):
         os.chdir(path)

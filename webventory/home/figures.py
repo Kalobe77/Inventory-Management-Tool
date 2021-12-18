@@ -9,7 +9,8 @@ def graph(x, y, username):
     fig.autofmt_xdate()
     user_path = os.path.join(os.path.dirname(__file__),"static","home", "temp", f'{username}')
     if not os.path.exists(user_path):
-        os.mkdir(user_path)
+        os.chdir(os.path.join(os.path.dirname(__file__),"static","home", "temp"))
+        os.mkdir(username)
     os.chdir(user_path)
     filename = f'graph_{random.randint(0,sys.maxsize)}.png'
     fig.savefig(filename, format="png")
