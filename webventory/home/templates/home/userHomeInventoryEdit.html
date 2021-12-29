@@ -69,7 +69,7 @@
                     <input type="text" name="description" id="description" maxlength="100" value="{{item.description}}"
                            required></p>
                 <p><label for="price">Price:</label>
-                    <input type="number" name="price" id="price" step="any" value="{{item.price}}" required></p>
+                    <input type="number" name="price" id="price" step="any" value="{{item.price|floatformat:2}}" required></p>
                 </p>
                 <button class="btn waves-effect waves-light hoverable" type="submit" name="action"><i
                         class="material-icons left">save</i>Save Changes
