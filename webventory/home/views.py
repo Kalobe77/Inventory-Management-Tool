@@ -169,7 +169,12 @@ def user_inventory(request, item_id=0, item_range=20):
         [type]: userHomeInventory.html with username, item, items, and item_history.
     """
     clear_graph_history(request.user)
-    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility=request.user)
+    print(request.POST.get('search'))
+    print(request.POST)
+    if(request.POST.get('search')):
+        items = Item.objects.filter(name__contains=request.POST['search'], user_visibility=request.user)
+    else:
+        items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility=request.user)
     item = str()
     item_history = str()
     if item_id != 0:

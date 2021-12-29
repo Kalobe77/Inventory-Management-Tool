@@ -61,9 +61,23 @@
                     {% endif %}
                 </span>
             </div>
+            <br>
+            <table></table>
+            <!--    Search Button-->
+
+            <form name="searchForm" action="/userInventory/" method="post">
+                {% csrf_token %}
+                <div class="input-field left col s3" style="margin-right: 10px">
+                    <input id="icon_prefix" type="text" class="validate" name="search" placeholder="Search for an item...">
+                    <button type="submit" class="left btn btn-small hoverable" style="background-color: #ee6e73;" name="action"><i
+                            class="material-icons left">search</i>Search
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-    <div class="col s5 center" style="padding-right : 5%">
+
+    <span class="col s5 center" style="padding-right : 5%">
         {%if item and item.user_visibility == user.username %}
         <h1 style="font-size: 75px"><i class="material-icons small" style="font-size : 50px">local_offer</i>
             {{item.name}}</h1>
@@ -72,25 +86,30 @@
         <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}
         </h4>
         {% else %}
-            {% include "home/card.html" with msg="Select an item to view more detailed information." %}
+        {% include "home/card.html" with msg="Select an item to view more detailed information." %}
         {% endif %}
-    </div>
+    </span>
 
     <div class="col s2 container center" style="padding-top:1%;">
-        <span>
-         <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
-            href="/create"><i class="material-icons right">add</i>Add</a>
-         <br>
-         <br>
-         {%if item and item.user_visibility == user.username %}
-             <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
-                href="edit"><i class="material-icons right">edit</i>Edit</a>
+        <!--bg?  blue-grey lighten-3-->
+        <div class="card-panel z-depth-1 red-text text-lighten-5" style="border-radius:15px">
+            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+               href="/create"><i class="material-icons right">add</i>Add</a>
+            <br>
+            <br>
+            {%if item and item.user_visibility == user.username %}
+            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+               href="edit"><i class="material-icons right">edit</i>Edit</a>
             <br>
             <br>
             <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
                href="delete"><i class="material-icons right">delete</i>Delete</a>
-         {% endif %}
-         </span>
+            <br>
+            <br>
+            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+               href="/userInsights/{{item.id}}/"><i class="material-icons right">insights</i>Insights</a>
+            {% endif %}
+        </div>
         <br>
     </div>
     {%if item and item.user_visibility == user.username %}
