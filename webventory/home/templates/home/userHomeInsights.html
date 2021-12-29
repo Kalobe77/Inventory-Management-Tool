@@ -59,10 +59,10 @@
             </div>
         </div>
     </div>
-    {%if item and item.user_visibility == user.username %}
-    <div class="col s3 center" style="padding-right : 5%">
-        {% load static %}
 
+    <div class="col s4 center" style="padding-right : 5%">
+        {% load static %}
+        {%if item and item.user_visibility == user.username %}
         <h3>Price Graph</h3>
         <!-- Gives alt Text Font Size -->
         <span style="font-size: 30px; font-weight: bold;">
@@ -73,8 +73,12 @@
         <!-- Gives alt Text Font Size -->
         <span style="font-size: 30px; font-weight: bold;">
             <img src="{% static quantity_graph %}" alt="No insights found yet!">
-        </span>
+    </span>
+        {% elif not item %}
+            {% include "home/card.html" with msg="Select an item to see your insights." %}
+        {% else %}
+        <h3>No insights found yet!</h3>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 {% endblock %}

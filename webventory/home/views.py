@@ -145,7 +145,8 @@ def delete_item(request, item_id=0):
     """
     does_item_exist = Item.objects.filter(id=item_id).exists()
     does_item_history_exist = ItemHistory.objects.filter(item_id=item_id).exists()
-    if does_item_exist:
+    user_owns = Item.objects.get(id=item_id).user_visibility == request.user
+    if does_item_exist and user_owns:
         item_to_delete = Item.objects.get(id=item_id)
         item_to_delete.delete()
         if does_item_history_exist:
@@ -163,6 +164,7 @@ def user_inventory(request, item_id=0, item_range=20):
     Args:
         request ([type]): HTTP request.
 
+    Returns:
     Returns:
         [type]: userHomeInventory.html with username, item, items, and item_history.
     """
@@ -223,7 +225,8 @@ def user_insights(request, item_id=0, item_range=20):
     """
     items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility=request.user)
     if item_id != 0:
-        item_history = ItemHistory.objects.filter(item_id=Item.objects.get(id=item_id)).select_related()
+        item = Item.objects.get(id=item_id)
+        item_history = ItemHistory.objects.filter(item_id=item).select_related()
         price_graph = ''
         quantity_graph = ''
         if len(item_history) > 1:
@@ -236,18 +239,21 @@ def user_insights(request, item_id=0, item_range=20):
                 date_change,
                 [y.quantity_after for y in item_history if
                  y.quantity_after], str(request.user)))
-            print(item_range)
+            print(price_graph, quantity_graph)
         return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
                                                               "items": items,
                                                               "price_graph": price_graph,
                                                               "quantity_graph": quantity_graph,
-                                                              "item": True,
+                                                              "item": item,
                                                               "item_id": item_id, "item_range": item_range})
     return render(request, 'home/userHomeInsights.html',
                   {"username": str(request.user).title(), "items": items, "item_id": item_id,
                    "item_range": item_range})
-def user_home_users(request):
-    return render(request,'home/userHomeUsers.html')
+
+
+@login_required(login_url='/login')
+def user_users(request):
+    return render(request, 'home/userHomeUsers.html', {"username": str(request.user).title()})
 
 
 def clear_graph_history(username):

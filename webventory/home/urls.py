@@ -20,7 +20,7 @@ urlpatterns = [
     # Home page.
     path('', views.home),
     # Home page.
-    path('home', views.home),
+    path('home/', views.home),
     # Login page.
     path('login', views.user_login),
     # User Landing page.
@@ -30,7 +30,7 @@ urlpatterns = [
     # Inventory page.
     path('userInventory/', views.user_inventory),
     # Inventory Insights page.
-    path('userInsights', views.user_insights),
+    path('userInsights/', views.user_insights),
     path('userInsights/<int:item_id>/', views.user_insights),
     # Specific Inventory Information given id number.
     path('userInventory/<int:item_id>/', views.user_inventory),
@@ -45,5 +45,5 @@ urlpatterns = [
     path('userInventory/<int:item_id>/<int:item_range>/', views.user_inventory),
     path('userInventory/<int:item_id>/<int:item_range>/edit', views.user_inventory_edit),
     path('userInsights/<int:item_id>/<int:item_range>/', views.user_insights),
-    path('userUsers/', views.user_home_users)
+    path('userUsers/', views.user_users)
 ]

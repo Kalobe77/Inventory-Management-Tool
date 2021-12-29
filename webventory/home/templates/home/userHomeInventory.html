@@ -44,9 +44,9 @@
                 </tbody>
             </table>
             {% elif item_range == 20 %}
-                <h4>No items in Inventory.</h4>
+            <h4>No items in Inventory.</h4>
             {% else %}
-                <h4>No Items Left.</h4>
+            <h4>No Items Left.</h4>
             {% endif %}
             <br>
             <div class="left">
@@ -71,6 +71,8 @@
         <h3>Price per {{item.name}}: ${{item.price|floatformat:2}}</h3>
         <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}
         </h4>
+        {% else %}
+            {% include "home/card.html" with msg="Select an item to view more detailed information." %}
         {% endif %}
     </div>
 
