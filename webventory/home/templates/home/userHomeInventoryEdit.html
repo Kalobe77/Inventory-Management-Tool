@@ -7,6 +7,7 @@
 <div class="row" style="padding-left : .5%;">
     <div class="container-fluid">
         <div class="col s5 center">
+            {% if items %}
             <table id="myTable">
                 <thead>
                 <tr>
@@ -41,6 +42,24 @@
                 {% endfor %}
                 </tbody>
             </table>
+            {% elif item_range == 20 %}
+                <h4>No items in Inventory.</h4>
+            {% else %}
+            <h4>No Items Left.</h4>
+            {% endif %}
+            <br>
+            <div class="left">
+                <span>
+                    {% if item_range > 20 %}
+                    <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+                       href="/userInventory/{{item_id}}/{{item_range|add:'-20'}}/edit"><i class="material-icons left">navigate_before</i>Previous</a>
+                    {% endif %}
+                    {% if items %}
+                    <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+                       href="/userInventory/{{item_id}}/{{item_range|add:'20'}}/edit"><i class="material-icons left">navigate_next</i>Next</a>
+                    {% endif %}
+                </span>
+            </div>
         </div>
     </div>
     <div class="container-fluid">
@@ -48,15 +67,8 @@
             <style>
             label {font-size: 15px; color: black;}
             p{font-size: 15px;}
-
-
-
-
-
-
-
             </style>
-
+            {%if item and item.user_visibility == user.username %}
             <form class="col s9" name="ItemEditForm" action="/userInventory/{{item.id}}/edit" method="post">
                 {% csrf_token %}
                 <p><label for="id_item">ID:</label>
@@ -69,13 +81,19 @@
                     <input type="text" name="description" id="description" maxlength="100" value="{{item.description}}"
                            required></p>
                 <p><label for="price">Price:</label>
-                    <input type="number" name="price" id="price" step="any" value="{{item.price|floatformat:2}}" required></p>
+                    <input type="number" name="price" id="price" step="any" value="{{item.price|floatformat:2}}"
+                           required></p>
                 </p>
-                <button class="btn waves-effect waves-light hoverable" type="submit" name="action"><i
-                        class="material-icons left">save</i>Save Changes
-                </button>
+                <span>
+                    <button class="btn waves-effect waves-light hoverable" type="submit" name="action"><i
+                            class="material-icons left">save</i>Save Changes
+                    </button>
+                    <a class="waves-effect waves-light btn hoverable" href="/userInventory/{{item_id}}/"><i
+                            class="material-icons left">local_offer</i>Cancel Changes</a>
+                </span>
 
             </form>
+            {% endif %}
         </div>
     </div>
 </div>

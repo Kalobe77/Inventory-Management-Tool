@@ -9,7 +9,9 @@ from django.shortcuts import render
 
 from .figures import graph
 from .models import Item, ItemHistory, User
+
 USER_INVETNTORY = '/userInventory'
+
 
 # Create your views here.
 def home(request):
@@ -155,7 +157,7 @@ def delete_item(request, item_id=0):
 
 
 @login_required(login_url='/login')
-def user_inventory(request, item_id=0):
+def user_inventory(request, item_id=0, item_range=20):
     """Creates an inventory item.
 
     Args:
@@ -165,18 +167,19 @@ def user_inventory(request, item_id=0):
         [type]: userHomeInventory.html with username, item, items, and item_history.
     """
     clear_graph_history(request.user)
-    items = Item.objects.all().select_related()
+    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility=request.user)
     item = str()
     item_history = str()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         item_history = ItemHistory.objects.filter(item_id=item).select_related()
     return render(request, 'home/userHomeInventory.html',
-                  {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history})
+                  {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
+                   'item_range': item_range, 'item_id': item_id})
 
 
 @login_required(login_url='/login')
-def user_inventory_edit(request, item_id=0):
+def user_inventory_edit(request, item_id=0, item_range=20):
     """Inventory edit page.
 
     Args:
@@ -191,8 +194,8 @@ def user_inventory_edit(request, item_id=0):
     if request.POST:
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
             new_history = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
-                                     price_after=request.POST.get('price'), quantity_before=item.quantity,
-                                     quantity_after=request.POST.get('quantity'))
+                                      price_after=request.POST.get('price'), quantity_before=item.quantity,
+                                      quantity_after=request.POST.get('quantity'))
             new_history.save()
         item.name = request.POST['name']
         item.description = request.POST['description']
@@ -200,15 +203,15 @@ def user_inventory_edit(request, item_id=0):
         item.quantity = request.POST.get('quantity')
         item.save()
         return HttpResponseRedirect(USER_INVETNTORY)
-    items = Item.objects.all().select_related()
+    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility=request.user)
     item_history = ItemHistory.objects.filter(item_id=item)
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items,
-                   "itemHistories": item_history})
+                   "itemHistories": item_history, "item_range": item_range, "item_id": item_id})
 
 
 @login_required(login_url='/login')
-def user_insights(request, item_id=0):
+def user_insights(request, item_id=0, item_range=20):
     """Inventory Insights Home page.
 
     Args:
@@ -218,7 +221,7 @@ def user_insights(request, item_id=0):
     Returns:
         [type]: userHomeInsights.html
     """
-    items = Item.objects.all().select_related()
+    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility=request.user)
     if item_id != 0:
         item_history = ItemHistory.objects.filter(item_id=Item.objects.get(id=item_id)).select_related()
         price_graph = ''
@@ -233,12 +236,18 @@ def user_insights(request, item_id=0):
                 date_change,
                 [y.quantity_after for y in item_history if
                  y.quantity_after], str(request.user)))
+            print(item_range)
         return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
                                                               "items": items,
                                                               "price_graph": price_graph,
                                                               "quantity_graph": quantity_graph,
-                                                              "item": True})
-    return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(), "items": items})
+                                                              "item": True,
+                                                              "item_id": item_id, "item_range": item_range})
+    return render(request, 'home/userHomeInsights.html',
+                  {"username": str(request.user).title(), "items": items, "item_id": item_id,
+                   "item_range": item_range})
+def user_home_users(request):
+    return render(request,'home/userHomeUsers.html')
 
 
 def clear_graph_history(username):

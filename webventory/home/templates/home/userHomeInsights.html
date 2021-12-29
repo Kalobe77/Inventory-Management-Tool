@@ -4,6 +4,7 @@
 <div class="row" style="padding-left : .5%;">
     <div class="container-fluid">
         <div class="col s5 center">
+            {% if items %}
             <table id="myTable">
                 <thead>
                 <tr>
@@ -38,9 +39,27 @@
                 {% endfor %}
                 </tbody>
             </table>
+            {% elif item_range == 20 %}
+                <h4>No items in Inventory.</h4>
+            {% else %}
+                <h4>No Items Left.</h4>
+            {% endif %}
+            <br>
+            <div class="left">
+                <span>
+                    {% if item_range > 20 %}
+                    <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+                       href="/userInsights/{{item_id}}/{{item_range|add:'-20'}}"><i class="material-icons left">navigate_before</i>Previous</a>
+                    {% endif %}
+                    {% if items %}
+                    <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+                       href="/userInsights/{{item_id}}/{{item_range|add:'20'}}"><i class="material-icons left">navigate_next</i>Next</a>
+                    {% endif %}
+                </span>
+            </div>
         </div>
     </div>
-    {%if item %}
+    {%if item and item.user_visibility == user.username %}
     <div class="col s3 center" style="padding-right : 5%">
         {% load static %}
 

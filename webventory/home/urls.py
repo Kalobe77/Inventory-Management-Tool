@@ -39,5 +39,11 @@ urlpatterns = [
     # Sign-up Page
     path('signup', views.user_signup),
     path('create', views.create_item),
-    path('userInventory/<int:item_id>/delete',views.delete_item),
+    path('userInventory/<int:item_id>/delete', views.delete_item),
+    # Range
+    path('userInventory/<int:item_id>/<int:item_range>/edit', views.user_inventory_edit),
+    path('userInventory/<int:item_id>/<int:item_range>/', views.user_inventory),
+    path('userInventory/<int:item_id>/<int:item_range>/edit', views.user_inventory_edit),
+    path('userInsights/<int:item_id>/<int:item_range>/', views.user_insights),
+    path('userUsers/', views.user_home_users)
 ]

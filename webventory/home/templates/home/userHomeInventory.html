@@ -8,6 +8,7 @@
     <div class="container-fluid">
         <div class="col s5 center">
             <br>
+            {% if items %}
             <table id="myTable">
                 <thead>
                 <tr>
@@ -42,11 +43,28 @@
                 {% endfor %}
                 </tbody>
             </table>
+            {% elif item_range == 20 %}
+                <h4>No items in Inventory.</h4>
+            {% else %}
+                <h4>No Items Left.</h4>
+            {% endif %}
             <br>
+            <div class="left">
+                <span>
+                    {% if item_range > 20 %}
+                    <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+                       href="/userInventory/{{item_id}}/{{item_range|add:'-20'}}"><i class="material-icons left">navigate_before</i>Previous</a>
+                    {% endif %}
+                    {% if items %}
+                    <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
+                       href="/userInventory/{{item_id}}/{{item_range|add:'20'}}"><i class="material-icons left">navigate_next</i>Next</a>
+                    {% endif %}
+                </span>
+            </div>
         </div>
     </div>
     <div class="col s5 center" style="padding-right : 5%">
-        {%if item %}
+        {%if item and item.user_visibility == user.username %}
         <h1 style="font-size: 75px"><i class="material-icons small" style="font-size : 50px">local_offer</i>
             {{item.name}}</h1>
         <h3>Quantity: {{item.quantity}}</h3>
@@ -62,18 +80,18 @@
             href="/create"><i class="material-icons right">add</i>Add</a>
          <br>
          <br>
-         {% if item %}
+         {%if item and item.user_visibility == user.username %}
              <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
                 href="edit"><i class="material-icons right">edit</i>Edit</a>
             <br>
             <br>
             <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
-                href="delete"><i class="material-icons right">delete</i>Delete</a>
+               href="delete"><i class="material-icons right">delete</i>Delete</a>
          {% endif %}
          </span>
         <br>
     </div>
-    {% if item %}
+    {%if item and item.user_visibility == user.username %}
     <div class="row s1 container right">
         <br>
         <table>
@@ -110,6 +128,8 @@
         </table>
     </div>
     {% endif %}
+    <!--Next Prev Buttons-->
 </div>
+
 
 {% endblock %}
