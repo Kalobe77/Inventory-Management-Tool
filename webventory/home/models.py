@@ -16,7 +16,7 @@ class Item(models.Model):
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=100)
     quantity = models.IntegerField()
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=9,decimal_places=2)
     user_visibility = models.CharField(max_length=30)
 
     def __str__(self):
