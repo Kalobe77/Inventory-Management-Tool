@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+import datetime
 import json
 
 from django.contrib.auth import authenticate, login, logout
@@ -150,7 +150,7 @@ def delete_item(request, item_id=0):
     user_owns = request.user in Item.objects.get(
         id=item_id).user_visibility.split(',')
     if does_item_exist and user_owns:
-        item_to_delete = Item.objects.get(id=item_id).select_related()
+        item_to_delete = Item.objects.get(id=item_id)
         item_to_delete.delete()
         if does_item_history_exist:
             item_history_delete = ItemHistory.objects.filter(
@@ -204,7 +204,7 @@ def user_inventory_edit(request, item_id=0, item_range=20):
         [type]: HTTPResponseRedirect to Inventory Home page if form submitted, 
         otherwise, Renders Inventory Edit page.
     """
-    item = Item.objects.get(id=item_id).select_related()
+    item = Item.objects.get(id=item_id)
     if request.POST:
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
             new_history = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
@@ -240,21 +240,31 @@ def user_insights(request, item_id=0, item_range=20):
         (item_range - 20), item_range), user_visibility__contains=f'{request.user},').select_related()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
-        item_history = ItemHistory.objects.filter(
-            item_id=item).select_related()
+        if request.POST:
+            startDateQuery = request.POST['startDate'].split('-')
+            endDateQuery = request.POST['endDate'].split('-')
+            startDate = datetime.datetime(int(startDateQuery[0]), int(startDateQuery[1]), int(startDateQuery[2]))
+            endDate = datetime.datetime(int(endDateQuery[0]), int(endDateQuery[1]), int(endDateQuery[2]))
+            if (startDate < endDate):
+                item_history = ItemHistory.objects.filter(item_id=item, date_of_change__gte=startDate,date_of_change__lte=endDate)
+            else:
+                item_history = ItemHistory.objects.filter(
+                    item_id=item).select_related()
+        else:
+            item_history = ItemHistory.objects.filter(
+                item_id=item).select_related()
         price_graph = quantity_graph = ''
         if len(item_history) > 1:
             date_change = [x.date_of_change.strftime(
                 '%m-%d %I:%M %p') for x in item_history if x.date_of_change]
             price_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
-                ["".join(["$", f'{y.price_after:.2f}']) for y in item_history
-                 if y.price_after], str(request.user)))
+                [y.price_after for y in item_history
+                 if y.price_after], str(request.user), True))
             quantity_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
                 [y.quantity_after for y in item_history if
-                 y.quantity_after], str(request.user)))
-
+                 y.quantity_after], str(request.user), False))
 
         return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
                                                               "items": items,
