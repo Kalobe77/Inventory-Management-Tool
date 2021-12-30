@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import json
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -121,7 +122,7 @@ def create_item(request):
             name=request.POST['name'],
             description=request.POST['description'],
             price=request.POST['price'],
-            user_visibility=request.POST['user_visibility'],
+            user_visibility=f'{request.user},',
             quantity=request.POST.get('quantity'))
         item.save()
         return HttpResponseRedirect(USER_INVETNTORY)
@@ -145,7 +146,7 @@ def delete_item(request, item_id=0):
     """
     does_item_exist = Item.objects.filter(id=item_id).exists()
     does_item_history_exist = ItemHistory.objects.filter(item_id=item_id).exists()
-    user_owns = Item.objects.get(id=item_id).user_visibility == request.user
+    user_owns = request.user in Item.objects.get(id=item_id).user_visibility.split(',')
     if does_item_exist and user_owns:
         item_to_delete = Item.objects.get(id=item_id)
         item_to_delete.delete()
@@ -169,20 +170,22 @@ def user_inventory(request, item_id=0, item_range=20):
         [type]: userHomeInventory.html with username, item, items, and item_history.
     """
     clear_graph_history(request.user)
-    print(request.POST.get('search'))
-    print(request.POST)
-    if(request.POST.get('search')):
-        items = Item.objects.filter(name__contains=request.POST['search'], user_visibility=request.user)
+    if (request.POST.get('search')):
+        items = Item.objects.filter(name__contains=request.POST['search'], user_visibility__contains=f'{request.user},')
+
     else:
-        items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility=request.user)
+        items = Item.objects.filter(id__range=((item_range - 20), item_range),
+                                    user_visibility__contains=f'{request.user},')
+    user_visibility = str()
     item = str()
     item_history = str()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         item_history = ItemHistory.objects.filter(item_id=item).select_related()
+        user_visibility = request.user in item.user_visibility.split(',')
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
-                   'item_range': item_range, 'item_id': item_id})
+                   'item_range': item_range, 'item_id': item_id, })
 
 
 @login_required(login_url='/login')
@@ -210,7 +213,7 @@ def user_inventory_edit(request, item_id=0, item_range=20):
         item.quantity = request.POST.get('quantity')
         item.save()
         return HttpResponseRedirect(USER_INVETNTORY)
-    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility=request.user)
+    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility__contains=f'{request.user},')
     item_history = ItemHistory.objects.filter(item_id=item)
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items,
@@ -228,7 +231,7 @@ def user_insights(request, item_id=0, item_range=20):
     Returns:
         [type]: userHomeInsights.html
     """
-    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility=request.user)
+    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility__contains=f'{request.user},')
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         item_history = ItemHistory.objects.filter(item_id=item).select_related()
@@ -244,7 +247,6 @@ def user_insights(request, item_id=0, item_range=20):
                 date_change,
                 [y.quantity_after for y in item_history if
                  y.quantity_after], str(request.user)))
-            print(price_graph, quantity_graph)
         return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
                                                               "items": items,
                                                               "price_graph": price_graph,
@@ -253,7 +255,7 @@ def user_insights(request, item_id=0, item_range=20):
                                                               "item_id": item_id, "item_range": item_range})
     return render(request, 'home/userHomeInsights.html',
                   {"username": str(request.user).title(), "items": items, "item_id": item_id,
-                   "item_range": item_range})
+                   "item_range": item_range,})
 
 
 @login_required(login_url='/login')

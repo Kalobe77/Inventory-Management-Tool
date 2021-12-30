@@ -17,11 +17,15 @@ class Item(models.Model):
     description = models.CharField(max_length=100)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=9,decimal_places=2)
-    user_visibility = models.CharField(max_length=30)
+    user_visibility = models.TextField()
 
     def __str__(self):
         return " ".join([str(self.name).title(), f"({str(self.id)})"])
         # return str(str(self.name).title()) + ' (' + str(self.id) + ')'
+
+    def get_user_visibility(self):
+        print(self.user_visibility.split(','))
+        return self.user_visibility.split(',')
 
 
 class User(AbstractUser):
@@ -39,6 +43,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
 
 
 class ItemHistory(models.Model):

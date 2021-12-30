@@ -17,7 +17,7 @@
                 </thead>
                 <tbody>
                 {% for item in items %}
-                {% if item.user_visibility == user.username %}
+                {% if user.username in item.get_user_visibility %}
                 <tr>
                     <td><a style="color: black" href="/userInsights/{{item.id}}">
                         {{ item.id }}
@@ -62,7 +62,8 @@
 
     <div class="col s4 center" style="padding-right : 5%">
         {% load static %}
-        {%if item and item.user_visibility == user.username %}
+        <h2 style="margin-bottom: 40px">{{item.name}} insights</h2>
+        {%if item and user.username in item.get_user_visibility %}
         <h3>Price Graph</h3>
         <!-- Gives alt Text Font Size -->
         <span style="font-size: 30px; font-weight: bold;">

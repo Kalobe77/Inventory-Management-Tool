@@ -21,7 +21,8 @@
                 </thead>
                 <tbody>
                 {% for item in items %}
-                {% if item.user_visibility == user.username %}
+                {% if user.username in item.get_user_visibility %}
+
                 <tr>
                     <td><a style="color: black" href="/userInventory/{{item.id}}">
                         {{ item.id }}
@@ -63,22 +64,24 @@
             </div>
             <br>
             <table></table>
-            <!--    Search Button-->
-
+            <!--Search Button-->
             <form name="searchForm" action="/userInventory/" method="post">
                 {% csrf_token %}
                 <div class="input-field left col s3" style="margin-right: 10px">
-                    <input id="icon_prefix" type="text" class="validate" name="search" placeholder="Search for an item...">
-                    <button type="submit" class="left btn btn-small hoverable" style="background-color: #ee6e73;" name="action"><i
+                    <input id="icon_prefix" type="text" class="validate" name="search">
+                    <button type="submit" class="left btn btn-small hoverable" style="background-color: #ee6e73;"
+                            name="action"><i
                             class="material-icons left">search</i>Search
                     </button>
+                    <label for="icon_prefix">Search for an item...</label>
                 </div>
             </form>
+            <!--End Search Button-->
         </div>
     </div>
 
     <span class="col s5 center" style="padding-right : 5%">
-        {%if item and item.user_visibility == user.username %}
+        {% if item and user.username in item.get_user_visibility %}
         <h1 style="font-size: 75px"><i class="material-icons small" style="font-size : 50px">local_offer</i>
             {{item.name}}</h1>
         <h3>Quantity: {{item.quantity}}</h3>
@@ -97,7 +100,7 @@
                href="/create"><i class="material-icons right">add</i>Add</a>
             <br>
             <br>
-            {%if item and item.user_visibility == user.username %}
+            {%if item and user.username in item.get_user_visibility %}
             <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
                href="edit"><i class="material-icons right">edit</i>Edit</a>
             <br>
@@ -112,7 +115,7 @@
         </div>
         <br>
     </div>
-    {%if item and item.user_visibility == user.username %}
+    {%if item and user.username in item.get_user_visibility %}
     <div class="row s1 container right">
         <br>
         <table>
@@ -149,7 +152,6 @@
         </table>
     </div>
     {% endif %}
-    <!--Next Prev Buttons-->
 </div>
 
 

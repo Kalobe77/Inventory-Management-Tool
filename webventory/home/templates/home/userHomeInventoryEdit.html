@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                 {% for item in items %}
-                {% if item.user_visibility == user.username %}
+                {% if user.username in item.get_user_visibility %}
                 <tr>
                     <td><a style="color: black" href="/userInventory/{{item.id}}">
                         {{ item.id }}
@@ -68,7 +68,7 @@
             label {font-size: 15px; color: black;}
             p{font-size: 15px;}
             </style>
-            {%if item and item.user_visibility == user.username %}
+            {%if item and user.username in item.get_user_visibility %}
             <form class="col s9" name="ItemEditForm" action="/userInventory/{{item.id}}/edit" method="post">
                 {% csrf_token %}
                 <p><label for="id_item">ID:</label>

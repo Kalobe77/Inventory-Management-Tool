@@ -45,3 +45,20 @@ tr:nth-child(even) {
 .wv-color{
     background-color: #ee6e73
 }
+/*Placeholder color text*/
+
+/*For modern browsers*/
+::placeholder{
+    color: #dcdcdc !important;
+    opacity: 1;
+}
+
+/*For IE*/
+:-ms-input-placeholder{
+    color: #dcdcdc !important;
+}
+
+/*For Edge*/
+::-ms-input-placeholder{
+    color: #dcdcdc !important;
+}
