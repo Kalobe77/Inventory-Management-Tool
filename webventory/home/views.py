@@ -145,13 +145,16 @@ def delete_item(request, item_id=0):
         [type]: userHomeInventory.html with username, item, items, and itemHistory.
     """
     does_item_exist = Item.objects.filter(id=item_id).exists()
-    does_item_history_exist = ItemHistory.objects.filter(item_id=item_id).exists()
-    user_owns = request.user in Item.objects.get(id=item_id).user_visibility.split(',')
+    does_item_history_exist = ItemHistory.objects.filter(
+        item_id=item_id).exists()
+    user_owns = request.user in Item.objects.get(
+        id=item_id).user_visibility.split(',')
     if does_item_exist and user_owns:
-        item_to_delete = Item.objects.get(id=item_id)
+        item_to_delete = Item.objects.get(id=item_id).select_related()
         item_to_delete.delete()
         if does_item_history_exist:
-            item_history_delete = ItemHistory.objects.filter(item_id=item_id)
+            item_history_delete = ItemHistory.objects.filter(
+                item_id=item_id).select_related()
             item_history_delete.delete()
         return HttpResponseRedirect(USER_INVETNTORY)
     else:
@@ -171,17 +174,18 @@ def user_inventory(request, item_id=0, item_range=20):
     """
     clear_graph_history(request.user)
     if (request.POST.get('search')):
-        items = Item.objects.filter(name__contains=request.POST['search'], user_visibility__contains=f'{request.user},')
+        items = Item.objects.filter(
+            name__contains=request.POST['search'], user_visibility__contains=f'{request.user},').select_related()
 
     else:
         items = Item.objects.filter(id__range=((item_range - 20), item_range),
-                                    user_visibility__contains=f'{request.user},')
+                                    user_visibility__contains=f'{request.user},').select_related()
     user_visibility = str()
     item = str()
     item_history = str()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
-        item_history = ItemHistory.objects.filter(item_id=item).select_related()
+        item_history = ItemHistory.objects.filter(item_id=item_id).select_related()
         user_visibility = request.user in item.user_visibility.split(',')
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
@@ -200,7 +204,7 @@ def user_inventory_edit(request, item_id=0, item_range=20):
         [type]: HTTPResponseRedirect to Inventory Home page if form submitted, 
         otherwise, Renders Inventory Edit page.
     """
-    item = Item.objects.get(id=item_id)
+    item = Item.objects.get(id=item_id).select_related()
     if request.POST:
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
             new_history = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
@@ -213,8 +217,9 @@ def user_inventory_edit(request, item_id=0, item_range=20):
         item.quantity = request.POST.get('quantity')
         item.save()
         return HttpResponseRedirect(USER_INVETNTORY)
-    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility__contains=f'{request.user},')
-    item_history = ItemHistory.objects.filter(item_id=item)
+    items = Item.objects.filter(id__range=(
+        (item_range - 20), item_range), user_visibility__contains=f'{request.user},').select_related()
+    item_history = ItemHistory.objects.filter(item_id=item).select_related()
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items,
                    "itemHistories": item_history, "item_range": item_range, "item_id": item_id})
@@ -231,14 +236,16 @@ def user_insights(request, item_id=0, item_range=20):
     Returns:
         [type]: userHomeInsights.html
     """
-    items = Item.objects.filter(id__range=((item_range - 20), item_range), user_visibility__contains=f'{request.user},')
+    items = Item.objects.filter(id__range=(
+        (item_range - 20), item_range), user_visibility__contains=f'{request.user},').select_related()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
-        item_history = ItemHistory.objects.filter(item_id=item).select_related()
-        price_graph = ''
-        quantity_graph = ''
+        item_history = ItemHistory.objects.filter(
+            item_id=item).select_related()
+        price_graph = quantity_graph = ''
         if len(item_history) > 1:
-            date_change = [x.date_of_change.strftime('%m-%d %I:%M %p') for x in item_history if x.date_of_change]
+            date_change = [x.date_of_change.strftime(
+                '%m-%d %I:%M %p') for x in item_history if x.date_of_change]
             price_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
                 ["".join(["$", f'{y.price_after:.2f}']) for y in item_history
@@ -247,6 +254,8 @@ def user_insights(request, item_id=0, item_range=20):
                 date_change,
                 [y.quantity_after for y in item_history if
                  y.quantity_after], str(request.user)))
+
+
         return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
                                                               "items": items,
                                                               "price_graph": price_graph,
@@ -255,7 +264,7 @@ def user_insights(request, item_id=0, item_range=20):
                                                               "item_id": item_id, "item_range": item_range})
     return render(request, 'home/userHomeInsights.html',
                   {"username": str(request.user).title(), "items": items, "item_id": item_id,
-                   "item_range": item_range,})
+                   "item_range": item_range, })
 
 
 @login_required(login_url='/login')
@@ -264,7 +273,8 @@ def user_users(request):
 
 
 def clear_graph_history(username):
-    path = os.path.join(os.path.dirname(__file__), 'static', 'home', 'temp', f'{username}')
+    path = os.path.join(os.path.dirname(__file__), 'static',
+                        'home', 'temp', f'{username}')
     if os.path.exists(path):
         os.chdir(path)
         for file in os.listdir(path):

@@ -21,10 +21,8 @@ class Item(models.Model):
 
     def __str__(self):
         return " ".join([str(self.name).title(), f"({str(self.id)})"])
-        # return str(str(self.name).title()) + ' (' + str(self.id) + ')'
 
     def get_user_visibility(self):
-        print(self.user_visibility.split(','))
         return self.user_visibility.split(',')
 
 
