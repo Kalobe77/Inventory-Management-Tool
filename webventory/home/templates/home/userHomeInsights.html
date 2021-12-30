@@ -91,7 +91,7 @@
                     <br>
                     <form name="dateRange" action="/userInsights/{{item.id}}/" method="post">
                         {% csrf_token %}
-                        <div class="input-field left col s5">
+                        <div class="input-field left col s4">
                             Start Date:<input
                                 id="startDate"
                                 type="date"
@@ -120,7 +120,7 @@
             </div>
         </div>
 
-        <div class="col offset-s2 s4 center container-fluid" style="padding-right: 5%">
+        <div class="col s5 left container-fluid" style="padding-right: 2%; padding-left: 5%;">
             {% load static %}
             <h2 style="margin-bottom: 40px">{{item.name}} insights</h2>
             {%if item and user.username in item.get_user_visibility %}
