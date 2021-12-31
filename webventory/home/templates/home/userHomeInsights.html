@@ -4,7 +4,7 @@
 <div class="row" style="padding-left: 0.5%">
   <div class="container-fluid">
     <div class="col s5 left">
-      <div class="center" style="padding-top: 2%">
+      <div class="center" style="padding-top: 1%">
         {% if items %}
         <table id="myTable">
           <thead>
@@ -102,21 +102,31 @@
                 class="datepicker"
                 name="startDate"
               />
+              
               End Date:<input
                 id="endDate"
                 type="date"
                 class="datepicker"
                 name="endDate"
               />
-              <button
+              </div>
+              <div class="col s4">
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <button
                 type="submit"
-                class="left btn btn-small hoverable"
-                style="background-color: #ee6e73"
+                class="btn btn-small hoverable"
+                style="background-color: #ee6e73; display: inline;"
                 name="action"
               >
                 <i class="material-icons left">search</i>Get Insights
               </button>
-            </div>
+              </div>
+            
           </form>
         </div>
         {% endif %}
@@ -129,7 +139,9 @@
       style="padding-right: 2%; padding-left: 5%"
     >
       {% load static %}
+      {% if item %}
       <h2 style="margin-bottom: 40px">{{item.name}} insights</h2>
+      {% endif %}
       {%if item and user.username in item.get_user_visibility %}
       <h3>Price Graph</h3>
       <!-- Gives alt Text Font Size -->
