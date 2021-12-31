@@ -2,6 +2,7 @@
 {% block title %}{{username}}'s Inventory | Webventory{% endblock %}
 {% block content %}
 {% load static %}
+{% include 'home/navbar.html' with inventory="active" %}
 <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
 <!-- Page Layout here -->
 <div class="row" style="padding-left : .5%;">

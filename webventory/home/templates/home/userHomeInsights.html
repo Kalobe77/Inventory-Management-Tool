@@ -1,147 +1,155 @@
-{% extends 'home/userHome.html' %}
-{% block title %}{{username}}'s Insights |Webventory{% endblock %}
-{% block content %}
+{% extends 'home/userHome.html' %} {% block title %}{{username}}'s Insights
+|Webventory{% endblock %} {% block content %} 
+{% include 'home/navbar.html' with insights="active" %}
 <div class="row" style="padding-left: 0.5%">
-    <div class="container-fluid">
-        <div class="col s5 left">
-            <div class="center" style="padding-top:2%;">
-                {% if items %}
-                <table id="myTable">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in items %}
-                    {% if user.username in item.get_user_visibility %}
-                    <tr>
-                        <td>
-                            <a style="color: black" href="/userInsights/{{item.id}}">
-                                {{ item.id }}
-                            </a>
-                        </td>
-                        <td>
-                            <a style="color: black" href="/userInsights/{{item.id}}">
-                                {{ item.name }}
-                            </a>
-                        </td>
-                        <td>
-                            <a style="color: black" href="/userInsights/{{item.id}}">
-                                {{ item.description }}
-                            </a>
-                        </td>
-                        <td>
-                            <a style="color: black" href="/userInsights/{{item.id}}">
-                                {{ item.quantity }}
-                            </a>
-                        </td>
-                        <td>
-                            <a style="color: black" href="/userInsights/{{item.id}}">
-                                ${{ item.price|floatformat:2 }}
-                            </a>
-                        </td>
-                    </tr>
-                    {% endif %}
-                    {% endfor %}
-                    </tbody>
-                </table>
-                {% elif item_range == 20 %}
-                <h4>No items in Inventory.</h4>
-                {% else %}
-                <h4>No Items Left.</h4>
-                {% endif %}
-                <br/>
-                <div class="left">
-                    <span>
-                      {% if item_range > 20 %}
-                      <a
-                              class="waves-effect waves-light btn-large hoverable"
-                              style="background-color: #ee6e73"
-                              href="/userInsights/{{item_id}}/{{item_range|add:'-20'}}"
-                      ><i class="material-icons left">navigate_before</i>Previous</a
-                      >
-                      {% endif %} {% if items %}
-                      <a
-                              class="waves-effect waves-light btn-large hoverable"
-                              style="background-color: #ee6e73"
-                              href="/userInsights/{{item_id}}/{{item_range|add:'20'}}"
-                      ><i class="material-icons left">navigate_next</i>Next</a
-                      >
-                      {% endif %}
-                    </span>
-                </div>
-            </div>
-            <div class="" style="margin-left: 0px">
-                <br>
-                <br>
-                <br>
-                <!-- Item Date Range -->
-                {% if item %}
-                <div>
-                    {% load static %}
-                    <h4 class="left">Date Range</h4>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <form name="dateRange" action="/userInsights/{{item.id}}/" method="post">
-                        {% csrf_token %}
-                        <div class="input-field left col s4">
-                            Start Date:<input
-                                id="startDate"
-                                type="date"
-                                class="datepicker"
-                                name="startDate"
-                        />
-                            End Date:<input
-                                id="endDate"
-                                type="date"
-                                class="datepicker"
-                                name="endDate"
-                        />
-                            <button
-                                    type="submit"
-                                    class="left btn btn-small hoverable"
-                                    style="background-color: #ee6e73"
-                                    name="action"
-                            >
-                                <i class="material-icons left">search</i>Get Insights
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                {% endif %}
-                <!-- End Date Range -->
-            </div>
-        </div>
-
-        <div class="col s5 left container-fluid" style="padding-right: 2%; padding-left: 5%;">
-            {% load static %}
-            <h2 style="margin-bottom: 40px">{{item.name}} insights</h2>
-            {%if item and user.username in item.get_user_visibility %}
-            <h3>Price Graph</h3>
-            <!-- Gives alt Text Font Size -->
-            <span style="font-size: 30px; font-weight: bold">
-      <img src="{% static price_graph %}" alt="No insights found yet!"/>
-    </span>
-
-            <h3>Quantity Graph</h3>
-            <!-- Gives alt Text Font Size -->
-            <span style="font-size: 30px; font-weight: bold">
-      <img src="{% static quantity_graph %}" alt="No insights found yet!"/>
-    </span>
-            {% elif not item %}
-            {% include "home/card.html" with msg="Select an item to see your insights." %}
-            {% else %}
-
-            <h3>No insights found yet!</h3>
+  <div class="container-fluid">
+    <div class="col s5 left">
+      <div class="center" style="padding-top: 2%">
+        {% if items %}
+        <table id="myTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Quantity</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %} 
+            {% if user.username in item.get_user_visibility %}
+            <tr>
+              <td>
+                <a style="color: black" href="/userInsights/{{item.id}}">
+                  {{ item.id }}
+                </a>
+              </td>
+              <td>
+                <a style="color: black" href="/userInsights/{{item.id}}">
+                  {{ item.name }}
+                </a>
+              </td>
+              <td>
+                <a style="color: black" href="/userInsights/{{item.id}}">
+                  {{ item.description }}
+                </a>
+              </td>
+              <td>
+                <a style="color: black" href="/userInsights/{{item.id}}">
+                  {{ item.quantity }}
+                </a>
+              </td>
+              <td>
+                <a style="color: black" href="/userInsights/{{item.id}}">
+                  ${{ item.price|floatformat:2 }}
+                </a>
+              </td>
+            </tr>
+            {% endif %} 
+            {% endfor %}
+          </tbody>
+        </table>
+        {% elif item_range == 20 %}
+        <h4>No items in Inventory.</h4>
+        {% else %}
+        <h4>No Items Left.</h4>
+        {% endif %}
+        <br />
+        <div class="left">
+          <span>
+            {% if item_range > 20 %}
+            <a
+              class="waves-effect waves-light btn-large hoverable"
+              style="background-color: #ee6e73"
+              href="/userInsights/{{item_id}}/{{item_range|add:'-20'}}"
+              ><i class="material-icons left">navigate_before</i>Previous</a
+            >
+            {% endif %} {% if items %}
+            <a
+              class="waves-effect waves-light btn-large hoverable"
+              style="background-color: #ee6e73"
+              href="/userInsights/{{item_id}}/{{item_range|add:'20'}}"
+              ><i class="material-icons left">navigate_next</i>Next</a
+            >
             {% endif %}
+          </span>
         </div>
+      </div>
+      <div class="" style="margin-left: 0px">
+        <br />
+        <br />
+        <br />
+        <!-- Item Date Range -->
+        {% if item %}
+        <div>
+          {% load static %}
+          <h4 class="left">Date Range</h4>
+          <br />
+          <br />
+          <br />
+          <br />
+          <form
+            name="dateRange"
+            action="/userInsights/{{item.id}}/"
+            method="post"
+          >
+            {% csrf_token %}
+            <div class="input-field left col s4">
+              Start Date:<input
+                id="startDate"
+                type="date"
+                class="datepicker"
+                name="startDate"
+              />
+              End Date:<input
+                id="endDate"
+                type="date"
+                class="datepicker"
+                name="endDate"
+              />
+              <button
+                type="submit"
+                class="left btn btn-small hoverable"
+                style="background-color: #ee6e73"
+                name="action"
+              >
+                <i class="material-icons left">search</i>Get Insights
+              </button>
+            </div>
+          </form>
+        </div>
+        {% endif %}
+        <!-- End Date Range -->
+      </div>
     </div>
+
+    <div
+      class="col s5 left container-fluid"
+      style="padding-right: 2%; padding-left: 5%"
+    >
+      {% load static %}
+      <h2 style="margin-bottom: 40px">{{item.name}} insights</h2>
+      {%if item and user.username in item.get_user_visibility %}
+      <h3>Price Graph</h3>
+      <!-- Gives alt Text Font Size -->
+      <span style="font-size: 30px; font-weight: bold">
+        <img src="{% static price_graph %}" alt="No insights found yet!" />
+      </span>
+
+      <h3>Quantity Graph</h3>
+      <!-- Gives alt Text Font Size -->
+      <span style="font-size: 30px; font-weight: bold">
+        <img src="{% static quantity_graph %}" alt="No insights found yet!" />
+      </span>
+      {% elif not item %}
+      <div class="center">
+      {% include "home/card.html" with msg="Select an item to see your insights." %}
+      </div>
+      {% else %}
+      <h3>No insights found yet!</h3>
+      {% endif %}
+    </div>
+  </div>
 </div>
 {% endblock %}

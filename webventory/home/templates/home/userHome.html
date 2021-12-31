@@ -1,6 +1,7 @@
 {% extends "home/userHomeBase.html" %}
 {% block title %}{{username}}'s Home | Webventory{% endblock %}
 {% block content %}
+{% include 'home/navbar.html' with home="active" %}
 {% load static %}
 <div class="container-fluid">
     <img src="{% static 'home/home_page_background.jpg' %}" class="materialboxed responsive-img">

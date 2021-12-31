@@ -1,68 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-
+  <head>
     <!--Import Google Icon Font-->
     <link
-            href="https://fonts.googleapis.com/icon?family=Material+Icons"
-            rel="stylesheet">
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
     <link
-            href="https://fonts.googleapis.com/icon?family=Material+Icons+Round|Material+Icons"
-            rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round|Material+Icons"
+      rel="stylesheet"
     />
     <!--Import materialize.css-->
     <!-- Compiled and minified CSS -->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'home/css/materialize.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/materialize.css' %}" />
     <!-- custom stylesheet -->
-    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}" />
     <!--Round Icons?-->
-    <link rel="stylesheet" href="{% static 'home/css/roundIcons.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/roundIcons.css' %}" />
     <!-- Compiled and minified JavaScript -->
     <script src="{% static 'home/css/materialize.js' %}"></script>
     <title>Webventory</title>
 
     <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
 
-<body>
-<!--Navbar-->
-<!--Navbar-->
-<nav>
-    <div class="nav-wrapper container-fluid">
-        <a href="/" class="brand-logo center" style="padding-left: 2%">Webventory</a>
+  <body>
+    <!--Navbar-->
+    <!--Navbar-->
+    <nav>
+      <div class="nav-wrapper container-fluid">
+        <a href="/" class="brand-logo center" style="padding-left: 2%"
+          >Webventory</a
+        >
         <a href="#" data-target="mobile-demo" class="sidenav-trigger"
-        ><em class="material-icons">menu</em></a>
+          ><em class="material-icons">menu</em></a
+        >
         <ul class="left hide-on-med-and-down">
-            <li><a href="/login">Login</a></li>
-            <li><a href="/signup">Sign-Up</a></li>
-            <li><a href="#">About Us</a></li>
+          <li><a href="/login">Login</a></li>
+          <li><a href="/signup">Sign-Up</a></li>
+          <li><a href="#">About Us</a></li>
         </ul>
-    </div>
-</nav>
+      </div>
+    </nav>
 
-<ul class="sidenav" id="mobile-demo">
-    <li><a href="#">Login</a></li>
-    <li><a href="#">About Us</a></li>
-</ul>
-<!--End Navbar-->
-<!--Main Content-->
-<main>
-    {% block content %}
-    {% endblock %}
-</main>
-<!--End Content-->
-<!--Footer-->
+    <ul class="sidenav" id="mobile-demo">
+      <li><a href="#">Login</a></li>
+      <li><a href="#">About Us</a></li>
+    </ul>
+    <!--End Navbar-->
+    <!--Main Content-->
+    <main>{% block content %} {% endblock %}</main>
+    <!--End Content-->
+    <!--Footer-->
 
-<footer class="page-footer">
-    <div class="container">
-        <div class="row">
-        </div>
-    </div>
-    <div class="footer-copyright">
+    <footer class="page-footer">
+      <div class="container">
+        <div class="row"></div>
+        <div class="row"></div>
+      </div>
+      <div class="footer-copyright">
         <div class="container center">© 2021 Webventory Copyright</div>
-    </div>
-</footer>
-</body>
+      </div>
+    </footer>
+  </body>
 </html>

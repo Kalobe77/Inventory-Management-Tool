@@ -1,6 +1,7 @@
 {% extends 'home/userHome.html' %}
 {% block title %}{{username}}'s Insights | Webventory{% endblock %}
 {% block content %}
+{% include "home/navbar.html" with users="active" %}
 <div>
     <div class="center">
 <!--        {% include 'home/card.html' with msg="This page has not been developed yet." %}-->

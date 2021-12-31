@@ -22,41 +22,9 @@
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
-
   <body>
-    <!--Navbar-->
-    <div class=""style="width: 100%">
-      <nav>
-        <div class="nav-wrapper navbar-fixed row s12">
-          <a href="/" class="brand-logo center" style="padding-left: 2%"
-            >Webventory</a
-          >
-          <a href="#" data-target="mobile-demo" class="sidenav-trigger"
-            ><em class="material-icons">menu</em></a
-          >
-          <ul class="left hide-on-med-and-down">
-            <li><a href="/userHome">{{username}}'s Home</a></li>
-            <li><a href="/userInventory">Inventory</a></li>
-            <li><a href="/userInsights">Insights</a></li>
-            <li><a href="/userUsers">Users</a></li>
-            <li><a href="/logout">Log Out</a></li>
-          </ul>
-          <h5 class="right" style="padding-right: 1%; padding-top: 0.125%">
-            Hello, {{username}}
-          </h5>
-        </div>
-      </nav>
-    </div>
-
-    <ul class="sidenav" id="mobile-demo">
-      <li><a href="#">Login</a></li>
-      <li><a href="#">About Us</a></li>
-    </ul>
-    <!--End Navbar-->
     <!--Main Content-->
-    <main>
-      {% block content %} {% endblock %}
-    </main>
+    <main>{% block content %} {% endblock %}</main>
     <!--End Content-->
     <!--Footer-->
     <footer class="page-footer">

@@ -103,7 +103,7 @@ def user_landing_page(request):
         [type]: userHome.html with username.
     """
     clear_graph_history(request.user)
-    return render(request, 'home/userHome.html', {"username": str(request.user).title()})
+    return render(request, 'home/userHome.html', {"username": str(request.user).title(),})
 
 
 @login_required(login_url='/login')
@@ -130,7 +130,7 @@ def create_item(request):
     clear_graph_history(request.user)
     items = Item.objects.all().select_related()
     return render(request, 'home/userHomeInventoryCreate.html',
-                  {"username": str(request.user).title(), "items": items})
+                  {"username": str(request.user).title(), "items": items,})
 
 
 @login_required(login_url='/login')
@@ -188,7 +188,7 @@ def user_inventory(request, item_id=0, item_range=10):
             item_id=item_id).select_related()
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
-                   'item_range': item_range, 'item_id': item_id, })
+                   'item_range': item_range, 'item_id': item_id,})
 
 
 @login_required(login_url='/login')
@@ -221,7 +221,7 @@ def user_inventory_edit(request, item_id=0, item_range=10):
     item_history = ItemHistory.objects.filter(item_id=item).select_related()
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items,
-                   "itemHistories": item_history, "item_range": item_range, "item_id": item_id})
+                   "itemHistories": item_history, "item_range": item_range, "item_id": item_id, "inventory": True})
 
 
 @login_required(login_url='/login')
@@ -273,15 +273,15 @@ def user_insights(request, item_id=0, item_range=10):
                                                               "price_graph": price_graph,
                                                               "quantity_graph": quantity_graph,
                                                               "item": item,
-                                                              "item_id": item_id, "item_range": item_range})
+                                                              "item_id": item_id, "item_range": item_range,})
     return render(request, 'home/userHomeInsights.html',
                   {"username": str(request.user).title(), "items": items, "item_id": item_id,
-                   "item_range": item_range, })
+                   "item_range": item_range,})
 
 
 @login_required(login_url='/login')
 def user_users(request):
-    return render(request, 'home/userHomeUsers.html', {"username": str(request.user).title()})
+    return render(request, 'home/userHomeUsers.html', {"username": str(request.user).title(),})
 
 
 def clear_graph_history(username):
