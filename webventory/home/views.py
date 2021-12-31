@@ -162,7 +162,7 @@ def delete_item(request, item_id=0):
 
 
 @login_required(login_url='/login')
-def user_inventory(request, item_id=0, item_range=20):
+def user_inventory(request, item_id=0, item_range=10):
     """Creates an inventory item.
 
     Args:
@@ -178,14 +178,15 @@ def user_inventory(request, item_id=0, item_range=20):
             name__contains=request.POST['search'], user_visibility__contains=f'{request.user},').select_related()
 
     else:
-        items = Item.objects.filter(id__range=((item_range - 20), item_range),
+        items = Item.objects.filter(id__range=((item_range - 10), item_range),
                                     user_visibility__contains=f'{request.user},').select_related()
     user_visibility = str()
     item = str()
     item_history = str()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
-        item_history = ItemHistory.objects.filter(item_id=item_id).select_related()
+        item_history = ItemHistory.objects.filter(
+            item_id=item_id).select_related()
         user_visibility = request.user in item.user_visibility.split(',')
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
@@ -193,7 +194,7 @@ def user_inventory(request, item_id=0, item_range=20):
 
 
 @login_required(login_url='/login')
-def user_inventory_edit(request, item_id=0, item_range=20):
+def user_inventory_edit(request, item_id=0, item_range=10):
     """Inventory edit page.
 
     Args:
@@ -218,7 +219,7 @@ def user_inventory_edit(request, item_id=0, item_range=20):
         item.save()
         return HttpResponseRedirect(USER_INVETNTORY)
     items = Item.objects.filter(id__range=(
-        (item_range - 20), item_range), user_visibility__contains=f'{request.user},').select_related()
+        (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
     item_history = ItemHistory.objects.filter(item_id=item).select_related()
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items,
@@ -226,7 +227,7 @@ def user_inventory_edit(request, item_id=0, item_range=20):
 
 
 @login_required(login_url='/login')
-def user_insights(request, item_id=0, item_range=20):
+def user_insights(request, item_id=0, item_range=10):
     """Inventory Insights Home page.
 
     Args:
@@ -237,16 +238,19 @@ def user_insights(request, item_id=0, item_range=20):
         [type]: userHomeInsights.html
     """
     items = Item.objects.filter(id__range=(
-        (item_range - 20), item_range), user_visibility__contains=f'{request.user},').select_related()
+        (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         if request.POST:
             startDateQuery = request.POST['startDate'].split('-')
             endDateQuery = request.POST['endDate'].split('-')
-            startDate = datetime.datetime(int(startDateQuery[0]), int(startDateQuery[1]), int(startDateQuery[2]))
-            endDate = datetime.datetime(int(endDateQuery[0]), int(endDateQuery[1]), int(endDateQuery[2]))
+            startDate = datetime.datetime(int(startDateQuery[0]), int(
+                startDateQuery[1]), int(startDateQuery[2]))
+            endDate = datetime.datetime(int(endDateQuery[0]), int(
+                endDateQuery[1]), int(endDateQuery[2]))
             if (startDate < endDate):
-                item_history = ItemHistory.objects.filter(item_id=item, date_of_change__gte=startDate,date_of_change__lte=endDate)
+                item_history = ItemHistory.objects.filter(
+                    item_id=item, date_of_change__gte=startDate, date_of_change__lte=endDate)
             else:
                 item_history = ItemHistory.objects.filter(
                     item_id=item).select_related()
