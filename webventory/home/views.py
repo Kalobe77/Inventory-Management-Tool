@@ -11,7 +11,7 @@ from django.shortcuts import render
 from .figures import graph
 from .models import Item, ItemHistory, User
 
-USER_INVETNTORY = '/userInventory'
+USER_INVENTORY = '/userInventory'
 
 
 # Create your views here.
@@ -125,7 +125,7 @@ def create_item(request):
             user_visibility=f'{request.user},',
             quantity=request.POST.get('quantity'))
         item.save()
-        return HttpResponseRedirect(USER_INVETNTORY)
+        return HttpResponseRedirect(USER_INVENTORY)
 
     clear_graph_history(request.user)
     items = Item.objects.all().select_related()
@@ -156,9 +156,9 @@ def delete_item(request, item_id=0):
             item_history_delete = ItemHistory.objects.filter(
                 item_id=item_id).select_related()
             item_history_delete.delete()
-        return HttpResponseRedirect(USER_INVETNTORY)
+        return HttpResponseRedirect(USER_INVENTORY)
     else:
-        return HttpResponseRedirect(USER_INVETNTORY)
+        return HttpResponseRedirect(USER_INVENTORY)
 
 
 @login_required(login_url='/login')
@@ -180,14 +180,12 @@ def user_inventory(request, item_id=0, item_range=10):
     else:
         items = Item.objects.filter(id__range=((item_range - 10), item_range),
                                     user_visibility__contains=f'{request.user},').select_related()
-    user_visibility = str()
     item = str()
     item_history = str()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         item_history = ItemHistory.objects.filter(
             item_id=item_id).select_related()
-        user_visibility = request.user in item.user_visibility.split(',')
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
                    'item_range': item_range, 'item_id': item_id, })
@@ -217,7 +215,7 @@ def user_inventory_edit(request, item_id=0, item_range=10):
         item.price = request.POST['price']
         item.quantity = request.POST.get('quantity')
         item.save()
-        return HttpResponseRedirect(USER_INVETNTORY)
+        return HttpResponseRedirect(USER_INVENTORY)
     items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
     item_history = ItemHistory.objects.filter(item_id=item).select_related()
@@ -242,15 +240,15 @@ def user_insights(request, item_id=0, item_range=10):
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         if request.POST:
-            startDateQuery = request.POST['startDate'].split('-')
-            endDateQuery = request.POST['endDate'].split('-')
-            startDate = datetime.datetime(int(startDateQuery[0]), int(
-                startDateQuery[1]), int(startDateQuery[2]))
-            endDate = datetime.datetime(int(endDateQuery[0]), int(
-                endDateQuery[1]), int(endDateQuery[2]))
-            if (startDate < endDate):
+            start_date_query = request.POST['startDate'].split('-')
+            end_date_query = request.POST['endDate'].split('-')
+            start_date = datetime.datetime(int(start_date_query[0]), int(
+                start_date_query[1]), int(start_date_query[2]))
+            end_date = datetime.datetime(int(end_date_query[0]), int(
+                end_date_query[1]), int(end_date_query[2]))
+            if (start_date < end_date):
                 item_history = ItemHistory.objects.filter(
-                    item_id=item, date_of_change__gte=startDate, date_of_change__lte=endDate)
+                    item_id=item, date_of_change__gte=start_date, date_of_change__lte=end_date)
             else:
                 item_history = ItemHistory.objects.filter(
                     item_id=item).select_related()
