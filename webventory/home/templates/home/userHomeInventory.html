@@ -33,11 +33,13 @@
         <!-- Item Options -->
         <div class="col s2 center" style="padding-top: 1%">
             <!--bg?  blue-grey lighten-3-->
+            {% if item and user.username in item.get_user_visibility %}
             <br>
             <br>
             <br>
             <br>
             <br>
+            {% endif %}
             <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73" href="/create"><i
                     class="material-icons right">add</i>Add</a>
             <br />
