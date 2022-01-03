@@ -1,0 +1,44 @@
+<br>
+{% if items %}
+<!-- Inventory Table -->
+<table id="myTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        {% if user.username in item.get_user_visibility %}
+
+        <tr>
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+                    {{ item.id }}
+                </a></td>
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+                    {{ item.name }}
+                </a></td>
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+                    {{ item.description }}
+                </a></td>
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+                    {{ item.quantity }}
+                </a></td>
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+                    ${{ item.price|floatformat:2 }}
+                </a></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% elif item_range == 20 %}
+<h4>No items in Inventory.</h4>
+{% else %}
+<h4>No Items Left.</h4>
+{% endif %}
+<br>

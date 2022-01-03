@@ -1,0 +1,13 @@
+<form name="searchForm" action="/{{rootPage}}/" method="post">
+    {% csrf_token %}
+    <div class="input-field center container" style="margin-right: 10px">
+        <div class="col">
+            <input id="searchQuery" type="text" class="validate" name="search" placeholder="Search for an item...">
+        </div>
+        <div class="col">
+            <button type="submit" class="left btn btn-small hoverable" style="background-color: #ee6e73;"
+                name="action"><i class="material-icons left">search</i>Search
+            </button>
+        </div>
+        <label for="searchQuery"></label>
+</form>

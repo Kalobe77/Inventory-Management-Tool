@@ -1,143 +1,13 @@
 {% extends 'home/userHome.html' %} {% block title %}{{username}}'s Insights
-|Webventory{% endblock %} {% block content %} 
+|Webventory{% endblock %} {% block content %}
 {% include 'home/navbar.html' with insights="active" %}
-<div class="row" style="padding-left: 0.5%">
-  <div class="container-fluid">
-    <div class="col s5 left">
-      <div class="center" style="padding-top: 1%">
-        {% if items %}
-        <table id="myTable">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Quantity</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in items %} 
-            {% if user.username in item.get_user_visibility %}
-            <tr>
-              <td>
-                <a style="color: black" href="/userInsights/{{item.id}}">
-                  {{ item.id }}
-                </a>
-              </td>
-              <td>
-                <a style="color: black" href="/userInsights/{{item.id}}">
-                  {{ item.name }}
-                </a>
-              </td>
-              <td>
-                <a style="color: black" href="/userInsights/{{item.id}}">
-                  {{ item.description }}
-                </a>
-              </td>
-              <td>
-                <a style="color: black" href="/userInsights/{{item.id}}">
-                  {{ item.quantity }}
-                </a>
-              </td>
-              <td>
-                <a style="color: black" href="/userInsights/{{item.id}}">
-                  ${{ item.price|floatformat:2 }}
-                </a>
-              </td>
-            </tr>
-            {% endif %} 
-            {% endfor %}
-          </tbody>
-        </table>
-        {% elif item_range == 20 %}
-        <h4>No items in Inventory.</h4>
-        {% else %}
-        <h4>No Items Left.</h4>
-        {% endif %}
-        <br />
-        <div class="left">
-          <span>
-            {% if item_range > 20 %}
-            <a
-              class="waves-effect waves-light btn-large hoverable"
-              style="background-color: #ee6e73"
-              href="/userInsights/{{item_id}}/{{item_range|add:'-20'}}"
-              ><i class="material-icons left">navigate_before</i>Previous</a
-            >
-            {% endif %} {% if items %}
-            <a
-              class="waves-effect waves-light btn-large hoverable"
-              style="background-color: #ee6e73"
-              href="/userInsights/{{item_id}}/{{item_range|add:'20'}}"
-              ><i class="material-icons left">navigate_next</i>Next</a
-            >
-            {% endif %}
-          </span>
-        </div>
-      </div>
-      <div class="" style="margin-left: 0px">
-        <br />
-        <br />
-        <br />
-        <!-- Item Date Range -->
-        {% if item %}
-        <div>
-          {% load static %}
-          <h4 class="left">Date Range</h4>
-          <br />
-          <br />
-          <br />
-          <br />
-          <form
-            name="dateRange"
-            action="/userInsights/{{item.id}}/"
-            method="post"
-          >
-            {% csrf_token %}
-            <div class="input-field left col s4">
-              Start Date:<input
-                id="startDate"
-                type="date"
-                class="datepicker"
-                name="startDate"
-              />
-              
-              End Date:<input
-                id="endDate"
-                type="date"
-                class="datepicker"
-                name="endDate"
-              />
-              </div>
-              <div class="col s4">
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <p></p>
-                  <button
-                type="submit"
-                class="btn btn-small hoverable"
-                style="background-color: #ee6e73; display: inline;"
-                name="action"
-              >
-                <i class="material-icons left">search</i>Get Insights
-              </button>
-              </div>
-            
-          </form>
-        </div>
-        {% endif %}
-        <!-- End Date Range -->
-      </div>
+<div class="container-fluid">
+  <div class="row" style="padding-left: 0.5%">
+    <!-- Inventory Table -->
+    <div class="col s6 left">
+      {% include 'home/inventoryTable.html' with rootPage="userInsights"%}
     </div>
-
-    <div
-      class="col s5 left container-fluid"
-      style="padding-right: 2%; padding-left: 5%"
-    >
+    <div class="col s6 right container" style="padding-right: 2%; padding-left: 5%">
       {% load static %}
       {% if item %}
       <h2 style="margin-bottom: 40px">{{item.name}} insights</h2>
@@ -156,11 +26,50 @@
       </span>
       {% elif not item %}
       <div class="center">
-      {% include "home/card.html" with msg="Select an item to see your insights." %}
+        {% include "home/card.html" with msg="Select an item to see your insights." %}
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
       </div>
       {% else %}
       <h3>No insights found yet!</h3>
       {% endif %}
+      {% if file_does_not_exist %}
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+      {% endif %}
+    </div>
+    <!-- Table Nav Buttons -->
+    <div class="">
+      <div class="col s6 left">
+        {% include 'home/tableNav.html' with inventory="inventory" rootPage="userInventory" %}
+      </div>
+    </div>
+    <div class="" style="margin-left: 0px">
+      <br />
+      <br />
+      <br />
+      <!-- Item Date Range Search -->
+      {% if item %}
+      <div class="container-fluid">
+        {% load static %}
+        <h4>Date Range</h4>
+        <form name="dateRange" action="/userInsights/{{item.id}}/" method="post">
+          {% csrf_token %}
+          <div class="input-field">
+            <div class="col s3">
+              Start Date:<input id="startDate" type="date" class="datepicker" name="startDate" />
+            </div>
+          </div>
+          <div class="col s3">
+            End Date:<input id="endDate" type="date" class="datepicker" name="endDate" />
+          </div>
+          <div class="center">
+            <button type="submit" class="btn btn-small hoverable" style="background-color: #ee6e73;" name="action">
+              <i class="material-icons left">search</i>Get Insights
+            </button>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+      <!-- End Date Range -->
     </div>
   </div>
 </div>

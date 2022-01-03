@@ -1,159 +1,106 @@
 {% extends 'home/userHome.html' %}
-{% block title %}{{username}}'s Inventory | Webventory{% endblock %}
+{% block title %}{{username}}'s Inventory |Webventory{% endblock %}
 {% block content %}
 {% load static %}
 {% include 'home/navbar.html' with inventory="active" %}
-<link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'home/css/style.css' %}" />
 <!-- Page Layout here -->
-<div class="row" style="padding-left : .5%;">
-    <div class="container-fluid">
-        <div class="col s5 center">
-            <br>
-            {% if items %}
-            <table id="myTable">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in items %}
-                {% if user.username in item.get_user_visibility %}
+<div class="container-fluid">
 
-                <tr>
-                    <td><a style="color: black" href="/userInventory/{{item.id}}">
-                        {{ item.id }}
-                    </a></td>
-                    <td><a style="color: black" href="/userInventory/{{item.id}}">
-                        {{ item.name }}
-                    </a></td>
-                    <td><a style="color: black" href="/userInventory/{{item.id}}">
-                        {{ item.description }}
-                    </a></td>
-                    <td><a style="color: black" href="/userInventory/{{item.id}}">
-                        {{ item.quantity }}
-                    </a></td>
-                    <td><a style="color: black" href="/userInventory/{{item.id}}">
-                        ${{ item.price|floatformat:2 }}
-                    </a></td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-                </tbody>
-            </table>
-            {% elif item_range == 20 %}
-            <h4>No items in Inventory.</h4>
+    <div class="row" style="padding-left: 0.5%">
+        <!-- Inventory Table (s5 spacing) -->
+        <div class="col s6">
+            {% include 'home/inventoryTable.html' with rootPage='userInventory' %}
+        </div>
+
+        <!-- Item Display -->
+        <div class="col s4 center">
+            {% if item and user.username in item.get_user_visibility %}
+            <h1 style="font-size: 75px">
+                <i class="material-icons small" style="font-size: 50px">local_offer</i>
+                {{item.name}}
+            </h1>
+            <h3>Quantity: {{item.quantity}}</h3>
+            <h3>Price per {{item.name}}: ${{item.price|floatformat:2}}</h3>
+            <h4>
+                <i class="material-icons small" style="font-size: 27px">description</i>Description:
+                {{item.description}}
+            </h4>
             {% else %}
-            <h4>No Items Left.</h4>
+            {% include "home/card.html" with msg="Select an item to view more detailed information." %}
             {% endif %}
+        </div>
+        <!-- Item Options -->
+        <div class="col s2 center" style="padding-top: 1%">
+            <!--bg?  blue-grey lighten-3-->
             <br>
-            <div class="left">
-                <span>
-                    {% if item_range > 20 %}
-                    <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
-                       href="/userInventory/{{item_id}}/{{item_range|add:'-20'}}"><i class="material-icons left">navigate_before</i>Previous</a>
-                    {% endif %}
-                    {% if items %}
-                    <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
-                       href="/userInventory/{{item_id}}/{{item_range|add:'20'}}"><i class="material-icons left">navigate_next</i>Next</a>
-                    {% endif %}
-                </span>
-            </div>
             <br>
-            <table></table>
-            <!--Search Button-->
-            <form name="searchForm" action="/userInventory/" method="post">
-                {% csrf_token %}
-                <div class="input-field left col s3" style="margin-right: 10px">
-                    <input id="icon_prefix" type="text" class="validate" name="search">
-                    <button type="submit" class="left btn btn-small hoverable" style="background-color: #ee6e73;"
-                            name="action"><i
-                            class="material-icons left">search</i>Search
-                    </button>
-                    <label for="icon_prefix">Search for an item...</label>
-                </div>
-            </form>
-            <!--End Search Button-->
+            <br>
+            <br>
+            <br>
+            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73" href="/create"><i
+                    class="material-icons right">add</i>Add</a>
+            <br />
+            <br />
+            {%if item and user.username in item.get_user_visibility %}
+            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73" href="edit"><i
+                    class="material-icons right">edit</i>Edit</a>
+            <br />
+            <br />
+            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73" href="delete"><i
+                    class="material-icons right">delete</i>Delete</a>
+            <br />
+            <br />
+            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73"
+                href="/userInsights/{{item.id}}/"><i class="material-icons right">insights</i>Insights</a>
+            {% endif %}
         </div>
     </div>
-
-    <span class="col s5 center" style="padding-right : 5%">
-        {% if item and user.username in item.get_user_visibility %}
-        <h1 style="font-size: 75px"><i class="material-icons small" style="font-size : 50px">local_offer</i>
-            {{item.name}}</h1>
-        <h3>Quantity: {{item.quantity}}</h3>
-        <h3>Price per {{item.name}}: ${{item.price|floatformat:2}}</h3>
-        <h4><i class="material-icons small" style="font-size: 27px">description</i>Description: {{item.description}}
-        </h4>
-        {% else %}
-        {% include "home/card.html" with msg="Select an item to view more detailed information." %}
-        {% endif %}
-    </span>
-
-    <div class="col s2 container center" style="padding-top:1%;">
-        <!--bg?  blue-grey lighten-3-->
-        <div class="card-panel z-depth-1 red-text text-lighten-5" style="border-radius:15px">
-            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
-               href="/create"><i class="material-icons right">add</i>Add</a>
-            <br>
-            <br>
-            {%if item and user.username in item.get_user_visibility %}
-            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
-               href="edit"><i class="material-icons right">edit</i>Edit</a>
-            <br>
-            <br>
-            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
-               href="delete"><i class="material-icons right">delete</i>Delete</a>
-            <br>
-            <br>
-            <a class="waves-effect waves-light btn-large hoverable" style="background-color: #ee6e73;"
-               href="/userInsights/{{item.id}}/"><i class="material-icons right">insights</i>Insights</a>
-            {% endif %}
+    <!-- Table Nav Buttons -->
+    <div class="row">
+        <div class="col s6 left">
+            {% include 'home/tableNav.html' with inventory="inventory" rootPage="userInsights" %}
         </div>
-        <br>
+
     </div>
     {%if item and user.username in item.get_user_visibility %}
-    <div class="row s1 container right">
-        <br>
+    <div class="col s6 right">
+        <br />
         <table>
             <thead>
-            <tr>
-                <th>Date and Time of Change</th>
-                <th>Quantity Before</th>
-                <th>Quantity After</th>
-                <th>Price Before</th>
-                <th>Price After</th>
-            </tr>
+                <tr>
+                    <th>Date and Time of Change</th>
+                    <th>Quantity Before</th>
+                    <th>Quantity After</th>
+                    <th>Price Before</th>
+                    <th>Price After</th>
+                </tr>
             </thead>
             <tbody>
-            {% for itemHistory in itemHistories %}
-            <tr>
-                <td>{{itemHistory.date_of_change}}</td>
-                {% if itemHistory.quantity_after != itemHistory.quantity_before %}
-                <td>{{itemHistory.quantity_before}}</td>
-                <td>{{itemHistory.quantity_after}}</td>
-                {% else %}
-                <td>No Change</td>
-                <td>No Change</td>
-                {% endif %}
-                {% if itemHistory.price_after != itemHistory.price_before %}
-                <td>${{itemHistory.price_before|floatformat:2}}</td>
-                <td>${{itemHistory.price_after|floatformat:2}}</td>
-                {% else %}
-                <td>No Change</td>
-                <td>No Change</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
+                {% for itemHistory in itemHistories %}
+                <tr>
+                    <td>{{itemHistory.date_of_change}}</td>
+                    {% if itemHistory.quantity_after != itemHistory.quantity_before %}
+                    <td>{{itemHistory.quantity_before}}</td>
+                    <td>{{itemHistory.quantity_after}}</td>
+                    {% else %}
+                    <td>No Change</td>
+                    <td>No Change</td>
+                    {% endif %}
+                    {% if itemHistory.price_after != itemHistory.price_before %}
+                    <td>${{itemHistory.price_before|floatformat:2}}</td>
+                    <td>${{itemHistory.price_after|floatformat:2}}</td>
+                    {% else %}
+                    <td>No Change</td>
+                    <td>No Change</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
-    {% endif %}
 </div>
-
+{% endif %}
+</div>
 
 {% endblock %}
