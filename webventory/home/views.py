@@ -243,7 +243,7 @@ def user_insights(request, item_id=0, item_range=10):
         item = Item.objects.get(id=item_id)
         if request.POST:
             if request.POST.get('start_date_query') and request.POST.get('end_date_query'):
-                if date_pattern.match(request.POST.get('start_date_query')) != None and date_pattern.match(request.POST.get('end_date_query')) != None:
+                if date_pattern.match(request.POST.get('start_date_query')) is not None and date_pattern.match(request.POST.get('end_date_query')) is not None:
                     start_date_query = request.POST['startDate'].split('-')
                     end_date_query = request.POST['endDate'].split('-')
                     start_date = datetime.datetime(int(start_date_query[0]), int(
