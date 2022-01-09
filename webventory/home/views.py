@@ -285,8 +285,31 @@ def user_insights(request, item_id=0, item_range=10):
 
 
 @login_required(login_url='/login')
-def user_users(request):
-    return render(request, 'home/userHomeUsers.html', {"username": str(request.user).title(), })
+def user_users(request, item_id=0, item_range=10):
+    item = str()
+    user_visibility = str()
+    item_msg = str()
+    users = [str(user) for user in User.objects.all()]
+    if(item_id != 0):
+        user_visibility = Item.objects.get(
+            id=item_id).user_visibility.split(',')
+        item = Item.objects.get(id=item_id)
+        item_msg = item.name + " Visibility Settings"
+    items = Item.objects.filter(id__range=(
+        (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
+    if request.POST:
+        print(request.POST)
+        user_visibility_list = f'{user_visibility[0]},'
+        for user in users:
+            print(user)
+            print(request.POST.get(str(user)))
+            if request.POST.get(f'{user}') and f'{user}' not in user_visibility_list:
+                user_visibility_list += f'{user},'
+        item.user_visibility = user_visibility_list
+        print(user_visibility_list)
+        item.save()
+        return render(request, 'home/userHomeVisability.html', {"username": str(request.user).title(), "items": items, "item_range": item_range,  "users": users, "msg": "Modification Successful"})
+    return render(request, 'home/userHomeVisability.html', {"username": str(request.user).title(), "items": items, "item_id": item_id, "item_range": item_range, "item": item, "users": users, "msg": "Select an item to modify user visability.", "item_msg": item_msg})
 
 
 def clear_graph_history(username):
