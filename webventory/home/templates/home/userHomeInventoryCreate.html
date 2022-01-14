@@ -10,58 +10,65 @@
         <div class="col s5 center">
             <table id="myTable">
                 <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                </tr>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% for item in items %}
-                {% if item.user_visibility == user.username %}
-                <tr>
-                    <td><a style="color: black" href="#">
-                        {{ item.id }}
-                    </a></td>
-                    <td><a style="color: black" href="#">
-                        {{ item.name }}
-                    </a></td>
-                    <td><a style="color: black" href="#">
-                        {{ item.description }}
-                    </a></td>
-                    <td><a style="color: black" href="#">
-                        {{ item.quantity }}
-                    </a></td>
-                    <td><a style="color: black" href="#">
-                        ${{ item.price|floatformat:2 }}
-                    </a></td>
-                </tr>
-                {% endif %}
-                {% endfor %}
+                    {% for item in items %}
+                    {% if item.user_visibility == user.username %}
+                    <tr>
+                        <td><a style="color: black" href="#">
+                                {{ item.id }}
+                            </a></td>
+                        <td><a style="color: black" href="#">
+                                {{ item.name }}
+                            </a></td>
+                        <td><a style="color: black" href="#">
+                                {{ item.description }}
+                            </a></td>
+                        <td><a style="color: black" href="#">
+                                {{ item.quantity }}
+                            </a></td>
+                        <td><a style="color: black" href="#">
+                                ${{ item.price|floatformat:2 }}
+                            </a></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
         <div class="col s7 center" style="padding-left: 5%">
             <style>
-            label {font-size: 15px; color: black;}
-            p{font-size: 15px;}
+                label {
+                    font-size: 15px;
+                    color: black;
+                }
 
-
-
+                p {
+                    font-size: 15px;
+                }
             </style>
 
             <form class="col s9" name="ItemCreationForm" action="/create" method="post">
                 {% csrf_token %}
                 <p><label for="id_name">Name:</label>
-                    <input type="text" name="name" id="id_name" maxlength="30" required></p>
+                    <input type="text" name="name" id="id_name" maxlength="30" required>
+                </p>
                 <p><label for="id_quantity">Quantity:</label>
-                    <input id="id_quantity" type="number" name="quantity" required></p>
+                    <input id="id_quantity" type="number" name="quantity" required>
+                </p>
                 <p><label for="description">Description:</label>
-                    <input type="text" name="description" id="description" maxlength="100" required></p>
+                    <input type="text" name="description" id="description" maxlength="100" required>
+                </p>
                 <p><label for="price">Price:</label>
-                    <input type="number" name="price" id="price" step="any" required></p>
+                    <input type="number" name="price" id="price" step="any" required>
+                </p>
                 <input type="hidden" name="user_visibility" id="user_visibility" value={{ user.username }}>
                 <button class="btn waves-effect waves-light hoverable" type="submit" name="action"><i
                         class="material-icons left">add</i>Create Item
