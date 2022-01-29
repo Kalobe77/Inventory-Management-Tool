@@ -14,6 +14,7 @@ from .figures import graph
 from .models import Item, ItemHistory, User
 
 USER_INVENTORY = '/userInventory'
+lock = dict()
 
 
 @is_logged_in
@@ -129,7 +130,6 @@ def create_item(request):
             quantity=request.POST.get('quantity'))
         item.save()
         return HttpResponseRedirect(USER_INVENTORY)
-
     clear_graph_history(request.user)
     items = Item.objects.all().select_related()
     return render(request, 'home/userHomeInventoryCreate.html',
@@ -175,11 +175,11 @@ def user_inventory(request, item_id=0, item_range=10):
     Returns:
         [type]: userHomeInventory.html with username, item, items, and item_history.
     """
+    MSG = "Select an item to view more detailed information."
     clear_graph_history(request.user)
     if (request.POST.get('search')):
         items = Item.objects.filter(
             name__contains=request.POST['search'], user_visibility__contains=f'{request.user},').select_related()
-
     else:
         items = Item.objects.filter(id__range=((item_range - 10), item_range),
                                     user_visibility__contains=f'{request.user},').select_related()
@@ -191,7 +191,7 @@ def user_inventory(request, item_id=0, item_range=10):
             item_id=item_id).select_related()
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
-                   'item_range': item_range, 'item_id': item_id, })
+                   'item_range': item_range, 'item_id': item_id, "msg": MSG, })
 
 
 @login_required(login_url='/login')
@@ -207,7 +207,25 @@ def user_inventory_edit(request, item_id=0, item_range=10):
         otherwise, Renders Inventory Edit page.
     """
     item = Item.objects.get(id=item_id)
+    if item_id in lock.keys():
+        MSG = "Item is locked by another user."
+        return render(request, 'home/userHomeInventory.html',
+                      {
+                          "username": str(request.user).title(),
+                          "item": str(),
+                          "items": Item.objects.filter(id__range=((item_range - 10), item_range),
+                                                       user_visibility__contains=f'{request.user},').select_related(),
+                          "itemHistories": str(),
+                          'item_range': item_range,
+                          'item_id': 0,
+                          "msg": MSG, })
     if request.POST:
+
+        if 'redirect' in request.POST:
+            if item_id in lock:
+
+                lock.pop(item_id)
+            return HttpResponseRedirect(f"{USER_INVENTORY}/{item_id}/")
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
             new_history = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
                                       price_after=request.POST.get('price'), quantity_before=item.quantity,
@@ -218,10 +236,14 @@ def user_inventory_edit(request, item_id=0, item_range=10):
         item.price = request.POST['price']
         item.quantity = request.POST.get('quantity')
         item.save()
-        return HttpResponseRedirect(USER_INVENTORY)
+        if item_id in lock:
+
+            lock.pop(item_id)
+        return HttpResponseRedirect(f"{USER_INVENTORY}/{item_id}/")
     items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
     item_history = ItemHistory.objects.filter(item_id=item).select_related()
+    lock[item_id] = request.user
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items,
                    "itemHistories": item_history, "item_range": item_range, "item_id": item_id, "inventory": True})
@@ -301,15 +323,12 @@ def user_users(request, item_id=0, item_range=10):
     items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
     if request.POST:
-        print(request.POST)
         user_visibility_list = f'{user_visibility[0]},'
         for user in users:
-            print(user)
-            print(request.POST.get(str(user)))
             if request.POST.get(f'{user}') and f'{user}' not in user_visibility_list:
                 user_visibility_list += f'{user},'
         item.user_visibility = user_visibility_list
-        print(user_visibility_list)
+
         item.save()
         return render(request, 'home/userHomeVisability.html', {"username": str(request.user).title(), "items": items, "item_range": item_range,  "users": users, "msg": "Modification Successful"})
     return render(request, 'home/userHomeVisability.html', {"username": str(request.user).title(), "items": items, "item_id": item_id, "item_range": item_range, "item": item, "users": users, "msg": "Select an item to modify user visability.", "item_msg": item_msg})
@@ -322,3 +341,9 @@ def clear_graph_history(username):
         os.chdir(path)
         for file in os.listdir(path):
             os.remove(file)
+
+@login_required(login_url='/login')
+def unlock(request, item_id):
+    if (item_id in lock and lock[item_id] == request.user):
+        lock.pop(item_id)
+    return HttpResponseRedirect(f'/userInventory/{item_id}/')

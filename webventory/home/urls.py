@@ -50,4 +50,5 @@ urlpatterns = [
     path('userVisability/', views.user_users),
     path('userVisability/<int:item_id>/<int:item_range>/', views.user_users),
     path('userVisability/<int:item_id>/', views.user_users),
+    path('unlock/<int:item_id>/', views.unlock)
 ]

@@ -27,7 +27,7 @@
                 {{item.description}}
             </h4>
             {% else %}
-            {% include "home/card.html" with msg="Select an item to view more detailed information." %}
+            {% include "home/card.html" with msg=msg %}
             {% endif %}
         </div>
         <!-- Item Options -->
