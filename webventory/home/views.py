@@ -8,12 +8,15 @@ from django.contrib.auth.hashers import make_password
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from .decorators import is_logged_in
+
 from .figures import graph
 from .models import Item, ItemHistory, User
 
 USER_INVENTORY = '/userInventory'
 
 
+@is_logged_in
 # Create your views here.
 def home(request):
     """Webventory Homepage
@@ -27,6 +30,7 @@ def home(request):
     return render(request, 'home/baseHome.html')
 
 
+@is_logged_in
 def user_login(request):
     """User Login page
 
@@ -36,8 +40,6 @@ def user_login(request):
     Returns:
         [type]: login.html
     """
-    if (request.user.is_authenticated):
-        return HttpResponseRedirect('/userHome')
     if request.POST:
         username = request.POST['username']
         password = request.POST['password']
@@ -67,6 +69,7 @@ def user_logout(request):
     return HttpResponseRedirect('/')
 
 
+@is_logged_in
 def user_signup(request):
     username = password = email = ''
     SIGNUP_PAGE = 'home/signup.html'
