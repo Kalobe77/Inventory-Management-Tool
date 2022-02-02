@@ -47,7 +47,7 @@ urlpatterns = [
     path('userInventory/<int:item_id>/<int:item_range>/edit',
          views.user_inventory_edit),
     path('userInsights/<int:item_id>/<int:item_range>/', views.user_insights),
-    path('userVisability/', views.user_users),
-    path('userVisability/<int:item_id>/<int:item_range>/', views.user_users),
-    path('userVisability/<int:item_id>/', views.user_users),
+    path('userVisibility/', views.user_users),
+    path('userVisibility/<int:item_id>/<int:item_range>/', views.user_users),
+    path('userVisibility/<int:item_id>/', views.user_users),
 ]

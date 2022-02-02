@@ -334,8 +334,8 @@ def user_users(request, item_id=0, item_range=10) -> render:
         item.user_visibility = user_visibility_list
         print(user_visibility_list)
         item.save()
-        return render(request, 'home/userHomeVisability.html', {"username": str(request.user).title(), "items": items, "item_range": item_range,  "users": users, "msg": "Modification Successful"})
-    return render(request, 'home/userHomeVisability.html', {"username": str(request.user).title(), "items": items, "item_id": item_id, "item_range": item_range, "item": item, "users": users, "msg": "Select an item to modify user visability.", "item_msg": item_msg})
+        return render(request, 'home/userHomeVisibility.html', {"username": str(request.user).title(), "items": items, "item_range": item_range,  "users": users, "msg": "Modification Successful"})
+    return render(request, 'home/userHomeVisibility.html', {"username": str(request.user).title(), "items": items, "item_id": item_id, "item_range": item_range, "item": item, "users": users, "msg": "Select an item to modify user visibility.", "item_msg": item_msg})
 
 
 def clear_graph_history(username: str) -> None:

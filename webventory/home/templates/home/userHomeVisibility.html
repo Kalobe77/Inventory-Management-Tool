@@ -5,13 +5,13 @@
 <div class="container-fluid">
     <div class="row" style="padding-bottom: 0; margin-bottom: 0;">
         <div class="col s6">
-            {% include "home/inventoryTable.html" with rootPage="userVisability" %}
+            {% include "home/inventoryTable.html" with rootPage="userVisibility" %}
         </div>
         <div class="col s6 center">
             {% if item and user.username in item.get_user_visibility %}
             {% include "home/card.html" with msg=item_msg %}
             <br>
-            <form action='/userVisability/{{item_id}}/{{item_range}}/' name="viewForm" method="post">
+            <form action='/userVisibility/{{item_id}}/{{item_range}}/' name="viewForm" method="post">
                 {% csrf_token %}
                 {% for userVisable in users %}
                 {% if userVisable == item.owner %}
@@ -52,7 +52,7 @@
     </div>
     <div class="row">
         <div class="col s6">
-            {% include 'home/tableNav.html' with inventory="inventory" rootPage="userVisability" %}
+            {% include 'home/tableNav.html' with inventory="inventory" rootPage="userVisibility" %}
         </div>
     </div>
     {% load static %}
