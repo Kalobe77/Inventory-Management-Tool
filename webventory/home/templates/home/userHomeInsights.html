@@ -37,9 +37,12 @@
       {% endif %}
     </div>
     <!-- Table Nav Buttons -->
+    {% if not item %}
+    <div class="row" style="margin: auto; padding: auto;"></div>
+    {% endif %}
     <div class="">
       <div class="col s6 left">
-        {% include 'home/tableNav.html' with inventory="inventory" rootPage="userInventory" %}
+        {% include 'home/tableNav.html' with inventory="inventory" rootPage="userInsights" %}
       </div>
     </div>
     <div class="" style="margin-left: 0px">
@@ -67,6 +70,9 @@
             </button>
           </div>
         </form>
+      </div>
+      {% else%}
+      <div class="container-fluid">
       </div>
       {% endif %}
       <!-- End Date Range -->

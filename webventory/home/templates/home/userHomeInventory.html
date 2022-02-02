@@ -31,13 +31,19 @@
             {% endif %}
         </div>
         <!-- Item Options -->
-        <div class="col s2 center" style="padding-top: 1%">
+        <div class="col s2 center" style="padding-top: 1%; padding-left: 0; margin-left: 0;">
             <!--bg?  blue-grey lighten-3-->
             {% if item and user.username in item.get_user_visibility %}
             <br>
             <br>
             <br>
             <br>
+            {% endif %}
+            {% if not item %}
+            <br />
+            <br />
+            <br />
+            <br />
             {% endif %}
             <a class="waves-effect waves-light btn hoverable" style="background-color: #ee6e73" href="/create"><i
                     class="material-icons right">add</i>Add</a>
@@ -64,7 +70,7 @@
     <!-- Table Nav Buttons -->
     <div class="row">
         <div class="col s6 left">
-            {% include 'home/tableNav.html' with inventory="inventory" rootPage="userInsights" %}
+            {% include 'home/tableNav.html' with inventory="inventory" rootPage="userInventory" %}
         </div>
 
     </div>
