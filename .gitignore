@@ -142,3 +142,4 @@ migrations
 .vscode/
 .dccache
 static/temp
+.dccache

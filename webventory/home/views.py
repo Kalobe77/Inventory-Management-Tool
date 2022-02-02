@@ -1,7 +1,7 @@
 import datetime
 import os
 import re
-from typing import Union
+from typing import Union, List
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -257,22 +257,20 @@ def user_insights(request, item_id=0, item_range=10) -> render:
     item_history: ItemHistory = str()
     if item_id != 0:
         item: Item = Item.objects.get(id=item_id)
-        if request.POST:
-            if request.POST.get('start_date_query') and request.POST.get('end_date_query'):
-                if date_pattern.match(request.POST.get('start_date_query')) is not None and date_pattern.match(request.POST.get('end_date_query')) is not None:
-                    start_date_query: date = request.POST['startDate'].split(
-                        '-')
-                    end_date_query: date = request.POST['endDate'].split('-')
-                    start_date: datetime = datetime.datetime(int(start_date_query[0]), int(
-                        start_date_query[1]), int(start_date_query[2]))
-                    end_date: datetime = datetime.datetime(int(end_date_query[0]), int(
-                        end_date_query[1]), int(end_date_query[2]))
-                    if (start_date < end_date):
-                        item_history = ItemHistory.objects.filter(
-                            item_id=item, date_of_change__gte=start_date, date_of_change__lte=end_date)
-                    else:
-                        item_history = ItemHistory.objects.filter(
-                            item_id=item).select_related()
+        if request.POST and (request.POST.get('start_date_query') and request.POST.get('end_date_query')) and (date_pattern.match(request.POST.get('start_date_query')) is not None and date_pattern.match(request.POST.get('end_date_query')) is not None):
+            start_date_query: date = request.POST['startDate'].split(
+                '-')
+            end_date_query: date = request.POST['endDate'].split('-')
+            start_date: datetime = datetime.datetime(int(start_date_query[0]), int(
+                  start_date_query[1]), int(start_date_query[2]))
+            end_date: datetime = datetime.datetime(int(end_date_query[0]), int(
+                   end_date_query[1]), int(end_date_query[2]))
+            if (start_date < end_date):
+                item_history = ItemHistory.objects.filter(
+                    item_id=item, date_of_change__gte=start_date, date_of_change__lte=end_date)
+            else:
+                item_history = ItemHistory.objects.filter(
+                    item_id=item).select_related()
         else:
             item_history: ItemHistory = ItemHistory.objects.filter(
                 item_id=item).select_related()
