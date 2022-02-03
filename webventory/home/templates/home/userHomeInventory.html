@@ -11,24 +11,35 @@
         <!-- Inventory Table (s5 spacing) -->
         <div class="col s6">
             {% include 'home/inventoryTable.html' with rootPage='userInventory' %}
+            <strong>
+                <h5 class="center" style="margin-top: 15px;"><i class="material-icons"
+                        style="font-size: 20px;">account_balance</i>Total
+                    Assets
+                    Worth: ${{total_assets|floatformat:2}}</h5>
+            </strong>
         </div>
 
         <!-- Item Display -->
         <div class="col s4 center">
             {% if item and user.username in item.get_user_visibility %}
             <h1 style="font-size: 75px">
-                <i class="material-icons small" style="font-size: 50px">local_offer</i>
+                <i class="material-icons" style="font-size: 50px">local_offer</i>
                 {{item.name}}
             </h1>
             <h3>Quantity: {{item.quantity}}</h3>
             <h3>Price per {{item.name}}: ${{item.price|floatformat:2}}</h3>
-            <h4>
-                <i class="material-icons small" style="font-size: 27px">description</i>Description:
+            <h4 style="margin-bottom: 0;">
+                <i class="material-icons" style="font-size: 27px">description</i>Description:
                 {{item.description}}
             </h4>
-            {% else %}
-            {% include "home/card.html" with msg="Select an item to view more detailed information." %}
-            {% endif %}
+            <p style="font-size: xx-large; margin-top: 10px;">
+                Total value of
+                {{item.name}}:
+                ${{total_item_worth|floatformat:2}}
+                </h4>
+                {% else %}
+                {% include "home/card.html" with msg="Select an item to view more detailed information." %}
+                {% endif %}
         </div>
         <!-- Item Options -->
         <div class="col s2 center" style="padding-top: 1%; padding-left: 0; margin-left: 0;">
@@ -75,7 +86,7 @@
 
     </div>
     {%if item and user.username in item.get_user_visibility %}
-    <div class="col s6 right">
+    <div class="col s6 right" style="padding-right: .5%;">
         <br />
         <table>
             <thead>

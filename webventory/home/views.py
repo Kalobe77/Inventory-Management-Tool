@@ -187,6 +187,7 @@ def user_inventory(request, item_id=0, item_range=10) -> render:
         [type]: userHomeInventory.html with username, item, items, and item_history.
     """
     clear_graph_history(request.user)
+    total_assets: float = 0
     if (request.POST.get('search')):
         items: Item = Item.objects.filter(
             name__contains=request.POST['search'], user_visibility__contains=f'{request.user},').select_related()
@@ -194,15 +195,22 @@ def user_inventory(request, item_id=0, item_range=10) -> render:
     else:
         items: Item = Item.objects.filter(id__range=((item_range - 10), item_range),
                                           user_visibility__contains=f'{request.user},').select_related()
-    item: Item = str()
     item_history: ItemHistory = str()
+    item: str = None
+    total_item_worth: float = 0
+    print(item_id)
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         item_history = ItemHistory.objects.filter(
             item_id=item_id).select_related()
+        total_item_worth = (item.price * item.quantity)
+    for item_iter in items:
+        total_assets += (item_iter.price * item_iter.quantity)
+    print(item)
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
-                   'item_range': item_range, 'item_id': item_id, })
+                   'item_range': item_range, 'item_id': item_id,
+                   'total_item_worth': total_item_worth, 'total_assets': total_assets})
 
 
 @login_required(login_url='/login')
@@ -217,6 +225,7 @@ def user_inventory_edit(request, item_id=0, item_range=10) -> RENDER_REDIRECT:
         [type]: HTTPResponseRedirect to Inventory Home page if form submitted,
         otherwise, Renders Inventory Edit page.
     """
+
     item: Item = Item.objects.get(id=item_id)
     if request.POST:
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
@@ -262,9 +271,9 @@ def user_insights(request, item_id=0, item_range=10) -> render:
                 '-')
             end_date_query: date = request.POST['endDate'].split('-')
             start_date: datetime = datetime.datetime(int(start_date_query[0]), int(
-                  start_date_query[1]), int(start_date_query[2]))
+                start_date_query[1]), int(start_date_query[2]))
             end_date: datetime = datetime.datetime(int(end_date_query[0]), int(
-                   end_date_query[1]), int(end_date_query[2]))
+                end_date_query[1]), int(end_date_query[2]))
             if (start_date < end_date):
                 item_history = ItemHistory.objects.filter(
                     item_id=item, date_of_change__gte=start_date, date_of_change__lte=end_date)
