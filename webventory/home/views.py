@@ -183,7 +183,6 @@ def user_inventory(request, item_id=0, item_range=10) -> render:
         request ([type]): HTTP request.
 
     Returns:
-    Returns:
         [type]: userHomeInventory.html with username, item, items, and item_history.
     """
     clear_graph_history(request.user)
@@ -198,7 +197,6 @@ def user_inventory(request, item_id=0, item_range=10) -> render:
     item_history: ItemHistory = str()
     item: str = None
     total_item_worth: float = 0
-    print(item_id)
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         item_history = ItemHistory.objects.filter(
@@ -206,7 +204,6 @@ def user_inventory(request, item_id=0, item_range=10) -> render:
         total_item_worth = (item.price * item.quantity)
     for item_iter in items:
         total_assets += (item_iter.price * item_iter.quantity)
-    print(item)
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
                    'item_range': item_range, 'item_id': item_id,
