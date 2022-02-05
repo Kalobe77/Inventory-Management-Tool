@@ -22,10 +22,10 @@ def home(request: HttpRequest) -> render:
     """Webventory Homepage
 
     Args:
-        request ([type]): HTTP Request
+        request (HttpRequest): HTTP Request
 
     Returns:
-        render(HttpRequest): Homepage.
+        render: Homepage.
     """
     return render(request, 'home/baseHome.html')
 
