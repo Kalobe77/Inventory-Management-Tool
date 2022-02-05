@@ -6,7 +6,7 @@ from typing import Union, List
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from django.shortcuts import render
 
 from .decorators import is_logged_in
@@ -18,27 +18,27 @@ USER_INVENTORY = '/userInventory'
 
 # Create your views here.
 @is_logged_in
-def home(request) -> render:
+def home(request: HttpRequest) -> render:
     """Webventory Homepage
 
     Args:
         request ([type]): HTTP Request
 
     Returns:
-        render: Homepage.
+        render(HttpRequest): Homepage.
     """
     return render(request, 'home/baseHome.html')
 
 
 @is_logged_in
-def user_login(request) -> render:
+def user_login(request: HttpRequest) -> render:
     """User Login page
 
     Args:
-        request ([type]): HTTP Request
+        request (HttpRequest): HTTP Request
 
     Returns:
-        [type]: login.html
+        (render): login.html
     """
     if request.POST:
         username: str = request.POST['username']
@@ -55,11 +55,11 @@ def user_login(request) -> render:
 
 
 @login_required(login_url='/login')
-def user_logout(request) -> HttpResponseRedirect:
+def user_logout(request: HttpRequest) -> HttpResponseRedirect:
     """User Logout request.
 
     Args:
-        request ([type]): HTTP Request.
+        request (HttpRequest): HTTP Request.
 
     Returns:
         HttpResponseRedirect : baseHome.html
@@ -70,12 +70,12 @@ def user_logout(request) -> HttpResponseRedirect:
 
 
 @is_logged_in
-def user_signup(request) -> Union[render, HttpResponseRedirect]:
+def user_signup(request: HttpRequest) -> Union[render, HttpResponseRedirect]:
     """
     user_signup User signup page.
 
     Args:
-        request ([type]): HTTP Request.
+        request (HttpRequest): HTTP Request.
 
     Returns:
         Union[render, HttpResponseRedirect] : Render or redirect depending on the request.
@@ -106,11 +106,11 @@ def user_signup(request) -> Union[render, HttpResponseRedirect]:
 
 
 @login_required(login_url='/login')
-def user_landing_page(request) -> render:
+def user_landing_page(request: HttpRequest) -> render:
     """User Homepage
 
     Args:
-        request ([type]): Http Request.
+        request (HttpRequest): Http Request.
 
     Returns:
         [type]: userHome.html with username.
@@ -120,11 +120,11 @@ def user_landing_page(request) -> render:
 
 
 @login_required(login_url='/login')
-def create_item(request) -> Union[render, HttpResponseRedirect]:
+def create_item(request: HttpRequest) -> Union[render, HttpResponseRedirect]:
     """Inventory Home Page.
 
     Args:
-        request ([type]): HTTP request.
+        request (HttpRequest): HTTP request.
         item_id (int, optional): Item ID number, if specified. Defaults to 0.
 
     Returns:
@@ -147,11 +147,11 @@ def create_item(request) -> Union[render, HttpResponseRedirect]:
 
 
 @login_required(login_url='/login')
-def delete_item(request, item_id=0) -> HttpResponseRedirect:
+def delete_item(request: HttpRequest, item_id=0) -> HttpResponseRedirect:
     """Inventory Home Page.
 
     Args:
-        request ([type]): HTTP request.
+        request (HttpRequest): HTTP request.
         item_id (int, optional): Item ID number, if specified. Defaults to 0.
 
     Returns:
@@ -175,11 +175,11 @@ def delete_item(request, item_id=0) -> HttpResponseRedirect:
 
 
 @login_required(login_url='/login')
-def user_inventory(request, item_id=0, item_range=10) -> render:
+def user_inventory(request: HttpRequest, item_id=0, item_range=10) -> render:
     """Creates an inventory item.
 
     Args:
-        request ([type]): HTTP request.
+        request (HttpRequest): HTTP request.
 
     Returns:
         [type]: userHomeInventory.html with username, item, items, and item_history.
@@ -210,12 +210,13 @@ def user_inventory(request, item_id=0, item_range=10) -> render:
 
 
 @login_required(login_url='/login')
-def user_inventory_edit(request, item_id=0, item_range=10) -> Union[render, HttpResponseRedirect]:
+def user_inventory_edit(request: HttpRequest, item_id=0, item_range=10) -> Union[render, HttpResponseRedirect]:
     """Inventory edit page.
 
     Args:
-        request ([type]): HTTP request.
+        request (HttpRequest): HTTP request.
         item_id (int, optional): Item ID number, if specified. Defaults to 0.
+        item_range (int, optional): item range to load.
 
     Returns:
         Union[render, HttpResponseRedirect] : HTTPResponseRedirect to Inventory Home page if form submitted,
@@ -245,12 +246,12 @@ def user_inventory_edit(request, item_id=0, item_range=10) -> Union[render, Http
 
 
 @login_required(login_url='/login')
-def user_insights(request, item_id=0, item_range=10) -> render:
+def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
     """Inventory Insights Home page.
 
     Args:
         item_id (int): item id number.
-        request ([type]): request.
+        request (HttpRequest): request.
         item_range(int): item range to display.
 
     Returns:
@@ -305,12 +306,12 @@ def user_insights(request, item_id=0, item_range=10) -> render:
 
 
 @login_required(login_url='/login')
-def user_users(request, item_id=0, item_range=10) -> render:
+def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
     """
     user_users Change visibility settings for other users.
 
     Args:
-        request ([type]): request.
+        request (HttpRequest): request.
         item_id (int, optional): current item to display. Defaults to 0.
         item_range (int, optional): Range of item to display. Defaults to 10.
 
@@ -348,7 +349,7 @@ def clear_graph_history(username: str) -> None:
     clear_graph_history Clears Graph History.
 
     Args:
-        username (str): ysername of current user.
+        username (str): username of current user.
     """
     path = os.path.join(os.path.dirname(__file__), 'static',
                         'home', 'temp', f'{username}')
