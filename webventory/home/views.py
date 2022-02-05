@@ -14,11 +14,10 @@ from .figures import graph
 from .models import Item, ItemHistory, User
 from datetime import date
 USER_INVENTORY = '/userInventory'
-RENDER_REDIRECT = Union[render, HttpResponseRedirect]
 
 
-@is_logged_in
 # Create your views here.
+@is_logged_in
 def home(request) -> render:
     """Webventory Homepage
 
@@ -71,7 +70,7 @@ def user_logout(request) -> HttpResponseRedirect:
 
 
 @is_logged_in
-def user_signup(request) -> RENDER_REDIRECT:
+def user_signup(request) -> Union[render, HttpResponseRedirect]:
     """
     user_signup User signup page.
 
@@ -79,7 +78,7 @@ def user_signup(request) -> RENDER_REDIRECT:
         request ([type]): HTTP Request.
 
     Returns:
-        RENDER_REDIRECT: Render or redirect depending on the request.
+        Union[render, HttpResponseRedirect] : Render or redirect depending on the request.
     """
     username = password = email = ''
     SIGNUP_PAGE = 'home/signup.html'
@@ -121,7 +120,7 @@ def user_landing_page(request) -> render:
 
 
 @login_required(login_url='/login')
-def create_item(request) -> RENDER_REDIRECT:
+def create_item(request) -> Union[render, HttpResponseRedirect]:
     """Inventory Home Page.
 
     Args:
@@ -129,7 +128,7 @@ def create_item(request) -> RENDER_REDIRECT:
         item_id (int, optional): Item ID number, if specified. Defaults to 0.
 
     Returns:
-        [type]: userHomeInventory.html with username, item, items, and itemHistory.
+        Union[render, HttpResponseRedirect] : userHomeInventory.html with username, item, items, and itemHistory.
     """
     if request.POST:
         item: Item = Item.objects.create(
@@ -211,7 +210,7 @@ def user_inventory(request, item_id=0, item_range=10) -> render:
 
 
 @login_required(login_url='/login')
-def user_inventory_edit(request, item_id=0, item_range=10) -> RENDER_REDIRECT:
+def user_inventory_edit(request, item_id=0, item_range=10) -> Union[render, HttpResponseRedirect]:
     """Inventory edit page.
 
     Args:
@@ -219,7 +218,7 @@ def user_inventory_edit(request, item_id=0, item_range=10) -> RENDER_REDIRECT:
         item_id (int, optional): Item ID number, if specified. Defaults to 0.
 
     Returns:
-        [type]: HTTPResponseRedirect to Inventory Home page if form submitted,
+        Union[render, HttpResponseRedirect] : HTTPResponseRedirect to Inventory Home page if form submitted,
         otherwise, Renders Inventory Edit page.
     """
 

@@ -1,8 +1,9 @@
-from typing import Union, Callable
-from django.http import HttpResponseRedirect
+from typing import Concatenate, Union, Callable, Any
+from django.http import HttpResponseRedirect, HttpRequest
+from django.shortcuts import render
 
 
-def is_logged_in(view_function: Callable) -> Union[HttpResponseRedirect, Callable]:
+def is_logged_in(view_function: Callable[[HttpRequest, Any], Union[render, HttpResponseRedirect]]) -> Callable[[HttpRequest, Any], Union[render, HttpResponseRedirect]]:
     """
     is_logged_in Redirects to home if logged in, else goes to login page
     """
