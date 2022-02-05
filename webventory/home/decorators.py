@@ -1,6 +1,5 @@
 from typing import Union, Callable
 from django.http import HttpResponseRedirect
-from typing import Union
 
 
 def is_logged_in(view_function: Callable) -> Union[HttpResponseRedirect, Callable]:
