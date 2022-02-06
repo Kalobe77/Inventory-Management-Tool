@@ -346,9 +346,9 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
         print(user_visibility_list)
         item.save()
         return_dict.update({"msg": "Modification Successful"})
-        return render(request, 'home/userHomeVisibility.html', return_dict)
-    return_dict.update({"item_id": item_id, "item": item,
-                       "msg": "Select an item to modify user visibility.", "item_msg": item_msg})
+    else:
+        return_dict.update({"item_id": item_id, "item": item,
+                            "msg": "Select an item to modify user visibility.", "item_msg": item_msg})
     return render(request, 'home/userHomeVisibility.html', return_dict)
 
 
