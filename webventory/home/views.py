@@ -226,10 +226,9 @@ def user_inventory_edit(request: HttpRequest, item_id=0, item_range=10) -> Union
     item = Item.objects.get(id=item_id)
     if request.POST:
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
-            new_history = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
-                                      price_after=request.POST.get('price'), quantity_before=item.quantity,
-                                      quantity_after=request.POST.get('quantity'))
-            new_history.save()
+            ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
+                        price_after=request.POST.get('price'), quantity_before=item.quantity,
+                        quantity_after=request.POST.get('quantity')).save()
         item.name = request.POST['name']
         item.description = request.POST['description']
         item.price = request.POST['price']
@@ -262,6 +261,9 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
     date_pattern = re.compile("[\d]{4}-[\d]{2}-[\d]{2}")
     items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
+    # html template variables
+    return_dict = {"username": str(request.user).title(), "items": items, "item_id": item_id,
+                   "item_range": item_range, }
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         if request.POST and (request.POST.get('start_date_query') and request.POST.get('end_date_query')) and (date_pattern.match(request.POST.get('start_date_query')) is not None and date_pattern.match(request.POST.get('end_date_query')) is not None):
@@ -296,16 +298,13 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
                 numpy.asarray([y.quantity_after for y in item_history if
                                y.quantity_after]), str(request.user), False))
         file_does_not_exist = False if price_graph else True
-
-        return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
-                                                              "items": items,
-                                                              "price_graph": price_graph,
-                                                              "quantity_graph": quantity_graph,
-                                                              "item": item,
-                                                              "item_id": item_id, "item_range": item_range, "file_does_not_exist": file_does_not_exist})
+        return_dict.update({"price_graph": price_graph,
+                            "quantity_graph": quantity_graph,
+                            "item": item,
+                            "file_does_not_exist": file_does_not_exist})
+        return render(request, 'home/userHomeInsights.html', return_dict)
     return render(request, 'home/userHomeInsights.html',
-                  {"username": str(request.user).title(), "items": items, "item_id": item_id,
-                   "item_range": item_range, })
+                  return_dict)
 
 
 @login_required(login_url='/login')
@@ -321,6 +320,7 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
     Returns:
         render: page render.
     """
+
     item = str()
     user_visibility = str()
     item_msg = str()
@@ -332,6 +332,8 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
         item_msg = item.name + " Visibility Settings"
     items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
+    return_dict = {"username": str(request.user).title(
+    ), "items": items, "item_range": item_range, "users": users}
     if request.POST:
         print(request.POST)
         user_visibility_list: str = f'{user_visibility[0]},'
@@ -343,8 +345,11 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
         item.user_visibility = user_visibility_list
         print(user_visibility_list)
         item.save()
-        return render(request, 'home/userHomeVisibility.html', {"username": str(request.user).title(), "items": items, "item_range": item_range,  "users": users, "msg": "Modification Successful"})
-    return render(request, 'home/userHomeVisibility.html', {"username": str(request.user).title(), "items": items, "item_range": item_range,  "users": users, "item_id": item_id, "item": item, "msg": "Select an item to modify user visibility.", "item_msg": item_msg})
+        return_dict.update({"msg": "Modification Successful"})
+        return render(request, 'home/userHomeVisibility.html', return_dict)
+    return_dict.update({"item_id": item_id, "item": item,
+                       "msg": "Select an item to modify user visibility.", "item_msg": item_msg})
+    return render(request, 'home/userHomeVisibility.html', return_dict)
 
 
 def clear_graph_history(username: str) -> None:
