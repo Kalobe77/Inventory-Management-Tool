@@ -1,4 +1,4 @@
-from typing import Concatenate, Union, Callable, Any
+from typing import Union, Callable, Any
 from django.http import HttpResponseRedirect, HttpRequest
 from django.shortcuts import render
 

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter, StrMethodFormatter
 from typing import List, Union
 from datetime import date
+import numpy
 import os
 
 

@@ -1,18 +1,20 @@
 import datetime
 import os
 import re
-from typing import Union, List
+from datetime import date
+from typing import List, Union
 
+import numpy
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponseRedirect, HttpRequest
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
 
 from .decorators import is_logged_in
 from .figures import graph
 from .models import Item, ItemHistory, User
-from datetime import date
+
 USER_INVENTORY = '/userInventory'
 
 
@@ -282,16 +284,16 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
                 item_id=item).select_related()
         price_graph = quantity_graph = ''
         if len(item_history) > 1:
-            date_change: List[date] = [x.date_of_change.strftime(
-                '%m-%d %I:%M %p') for x in item_history if x.date_of_change]
+            date_change: List[date] = numpy.asarray([x.date_of_change.strftime(
+                '%m-%d %I:%M %p') for x in item_history if x.date_of_change])
             price_graph: str = f"home/temp/{request.user}/" + str(graph(
                 date_change,
-                [y.price_after for y in item_history
-                 if y.price_after], str(request.user), True))
+                numpy.asarray([y.price_after for y in item_history
+                               if y.price_after]), str(request.user), True))
             quantity_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
-                [y.quantity_after for y in item_history if
-                 y.quantity_after], str(request.user), False))
+                numpy.asarray([y.quantity_after for y in item_history if
+                               y.quantity_after]), str(request.user), False))
         file_does_not_exist: bool = False if price_graph else True
 
         return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
@@ -319,9 +321,9 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
         render: page render.
     """
     item: Item = str()
-    user_visibility: str = str()
-    item_msg: str = str()
-    users: List[str] = [str(user) for user in User.objects.all()]
+    user_visibility = str()
+    item_msg = str()
+    users = numpy.asarray([str(user) for user in User.objects.all()])
     if(item_id != 0):
         user_visibility = Item.objects.get(
             id=item_id).user_visibility.split(',')
