@@ -43,9 +43,9 @@ def user_login(request: HttpRequest) -> render:
         (render): login.html
     """
     if request.POST:
-        username: str = request.POST['username']
-        password: str = request.POST['password']
-        user: authenticate = authenticate(username=username, password=password)
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
                 login(request, user)
@@ -85,11 +85,11 @@ def user_signup(request: HttpRequest) -> Union[render, HttpResponseRedirect]:
     username = password = email = ''
     SIGNUP_PAGE = 'home/signup.html'
     if request.POST:
-        username: str = request.POST['username']
-        email: str = request.POST['email']
-        password: str = make_password(request.POST['password'])
-        does_user_exist: bool = User.objects.filter(username=username).exists()
-        does_email_exist: bool = User.objects.filter(email=email).exists()
+        username = request.POST['username']
+        email = request.POST['email']
+        password = make_password(request.POST['password'])
+        does_user_exist = User.objects.filter(username=username).exists()
+        does_email_exist = User.objects.filter(email=email).exists()
         if does_user_exist and does_email_exist:
             return render(request, SIGNUP_PAGE,
                           {"error": "Invalid Sign-up! Username and Email are already taken."})
@@ -100,7 +100,7 @@ def user_signup(request: HttpRequest) -> Union[render, HttpResponseRedirect]:
             return render(request, SIGNUP_PAGE,
                           {"error": "Invalid Sign-up! Email already taken."})
         else:
-            new_user: User = User(
+            new_user = User(
                 username=username, email=email, password=password)
             new_user.save()
             return HttpResponseRedirect('/home')
@@ -133,7 +133,7 @@ def create_item(request: HttpRequest) -> Union[render, HttpResponseRedirect]:
         Union[render, HttpResponseRedirect] : userHomeInventory.html with username, item, items, and itemHistory.
     """
     if request.POST:
-        item: Item = Item.objects.create(
+        item = Item.objects.create(
             name=request.POST['name'],
             description=request.POST['description'],
             price=request.POST['price'],
@@ -143,7 +143,7 @@ def create_item(request: HttpRequest) -> Union[render, HttpResponseRedirect]:
         return HttpResponseRedirect(USER_INVENTORY)
 
     clear_graph_history(request.user)
-    items: Item = Item.objects.all().select_related()
+    items = Item.objects.all().select_related()
     return render(request, 'home/userHomeInventoryCreate.html',
                   {"username": str(request.user).title(), "items": items, })
 
@@ -159,16 +159,16 @@ def delete_item(request: HttpRequest, item_id=0) -> HttpResponseRedirect:
     Returns:
         [type]: userHomeInventory.html with username, item, items, and itemHistory.
     """
-    does_item_exist: bool = Item.objects.filter(id=item_id).exists()
-    does_item_history_exist: bool = ItemHistory.objects.filter(
+    does_item_exist = Item.objects.filter(id=item_id).exists()
+    does_item_history_exist = ItemHistory.objects.filter(
         item_id=item_id).exists()
     user_owns: List[str] = request.user in Item.objects.get(
         id=item_id).user_visibility.split(',')
     if does_item_exist and user_owns:
-        item_to_delete: Item = Item.objects.get(id=item_id)
+        item_to_delete = Item.objects.get(id=item_id)
         item_to_delete.delete()
         if does_item_history_exist:
-            item_history_delete: ItemHistory = ItemHistory.objects.filter(
+            item_history_delete = ItemHistory.objects.filter(
                 item_id=item_id).select_related()
             item_history_delete.delete()
         return HttpResponseRedirect(USER_INVENTORY)
@@ -187,17 +187,17 @@ def user_inventory(request: HttpRequest, item_id=0, item_range=10) -> render:
         [type]: userHomeInventory.html with username, item, items, and item_history.
     """
     clear_graph_history(request.user)
-    total_assets: float = 0
+    total_assets = 0
     if (request.POST.get('search')):
-        items: Item = Item.objects.filter(
+        items = Item.objects.filter(
             name__contains=request.POST['search'], user_visibility__contains=f'{request.user},').select_related()
 
     else:
-        items: Item = Item.objects.filter(id__range=((item_range - 10), item_range),
+        items = Item.objects.filter(id__range=((item_range - 10), item_range),
                                           user_visibility__contains=f'{request.user},').select_related()
-    item_history: ItemHistory = str()
-    item: str = None
-    total_item_worth: float = 0
+    item_history = str()
+    item = None
+    total_item_worth = 0
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         item_history = ItemHistory.objects.filter(
@@ -225,10 +225,10 @@ def user_inventory_edit(request: HttpRequest, item_id=0, item_range=10) -> Union
         otherwise, Renders Inventory Edit page.
     """
 
-    item: Item = Item.objects.get(id=item_id)
+    item = Item.objects.get(id=item_id)
     if request.POST:
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
-            new_history: ItemHistory = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
+            new_history = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
                                                    price_after=request.POST.get('price'), quantity_before=item.quantity,
                                                    quantity_after=request.POST.get('quantity'))
             new_history.save()
@@ -238,9 +238,9 @@ def user_inventory_edit(request: HttpRequest, item_id=0, item_range=10) -> Union
         item.quantity = request.POST.get('quantity')
         item.save()
         return HttpResponseRedirect(USER_INVENTORY)
-    items: Item = Item.objects.filter(id__range=(
+    items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
-    item_history: ItemHistory = ItemHistory.objects.filter(
+    item_history = ItemHistory.objects.filter(
         item_id=item).select_related()
     return render(request, 'home/userHomeInventoryEdit.html',
                   {"username": str(request.user).title(), "item": item, "items": items,
@@ -260,18 +260,18 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
         render : userHomeInsights.html.
     """
     date_pattern = re.compile("[\d]{4}-[\d]{2}-[\d]{2}")
-    items: Item = Item.objects.filter(id__range=(
+    items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
-    item_history: ItemHistory = str()
+    item_history = str()
     if item_id != 0:
-        item: Item = Item.objects.get(id=item_id)
+        item = Item.objects.get(id=item_id)
         if request.POST and (request.POST.get('start_date_query') and request.POST.get('end_date_query')) and (date_pattern.match(request.POST.get('start_date_query')) is not None and date_pattern.match(request.POST.get('end_date_query')) is not None):
-            start_date_query: date = request.POST['startDate'].split(
+            start_date_query = request.POST['startDate'].split(
                 '-')
-            end_date_query: date = request.POST['endDate'].split('-')
-            start_date: datetime = datetime.datetime(int(start_date_query[0]), int(
+            end_date_query = request.POST['endDate'].split('-')
+            start_date = datetime.datetime(int(start_date_query[0]), int(
                 start_date_query[1]), int(start_date_query[2]))
-            end_date: datetime = datetime.datetime(int(end_date_query[0]), int(
+            end_date = datetime.datetime(int(end_date_query[0]), int(
                 end_date_query[1]), int(end_date_query[2]))
             if (start_date < end_date):
                 item_history = ItemHistory.objects.filter(
@@ -280,13 +280,13 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
                 item_history = ItemHistory.objects.filter(
                     item_id=item).select_related()
         else:
-            item_history: ItemHistory = ItemHistory.objects.filter(
+            item_history = ItemHistory.objects.filter(
                 item_id=item).select_related()
         price_graph = quantity_graph = ''
         if len(item_history) > 1:
             date_change: List[date] = numpy.asarray([x.date_of_change.strftime(
                 '%m-%d %I:%M %p') for x in item_history if x.date_of_change])
-            price_graph: str = f"home/temp/{request.user}/" + str(graph(
+            price_graph = f"home/temp/{request.user}/" + str(graph(
                 date_change,
                 numpy.asarray([y.price_after for y in item_history
                                if y.price_after]), str(request.user), True))
@@ -294,7 +294,7 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
                 date_change,
                 numpy.asarray([y.quantity_after for y in item_history if
                                y.quantity_after]), str(request.user), False))
-        file_does_not_exist: bool = False if price_graph else True
+        file_does_not_exist = False if price_graph else True
 
         return render(request, 'home/userHomeInsights.html', {"username": str(request.user).title(),
                                                               "items": items,
@@ -320,7 +320,7 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
     Returns:
         render: page render.
     """
-    item: Item = str()
+    item = str()
     user_visibility = str()
     item_msg = str()
     users = numpy.asarray([str(user) for user in User.objects.all()])
@@ -329,7 +329,7 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
             id=item_id).user_visibility.split(',')
         item = Item.objects.get(id=item_id)
         item_msg = item.name + " Visibility Settings"
-    items: Item = Item.objects.filter(id__range=(
+    items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
     if request.POST:
         print(request.POST)
