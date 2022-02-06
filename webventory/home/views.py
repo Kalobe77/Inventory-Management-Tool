@@ -171,9 +171,7 @@ def delete_item(request: HttpRequest, item_id=0) -> HttpResponseRedirect:
             item_history_delete = ItemHistory.objects.filter(
                 item_id=item_id).select_related()
             item_history_delete.delete()
-        return HttpResponseRedirect(USER_INVENTORY)
-    else:
-        return HttpResponseRedirect(USER_INVENTORY)
+    return HttpResponseRedirect(USER_INVENTORY)
 
 
 @login_required(login_url='/login')
@@ -194,7 +192,7 @@ def user_inventory(request: HttpRequest, item_id=0, item_range=10) -> render:
 
     else:
         items = Item.objects.filter(id__range=((item_range - 10), item_range),
-                                          user_visibility__contains=f'{request.user},').select_related()
+                                    user_visibility__contains=f'{request.user},').select_related()
     item_history = str()
     item = None
     total_item_worth = 0
@@ -229,8 +227,8 @@ def user_inventory_edit(request: HttpRequest, item_id=0, item_range=10) -> Union
     if request.POST:
         if ((request.POST['price'] != str(item.price)) or (request.POST['quantity'] != str(item.quantity))):
             new_history = ItemHistory(item_id=item, date_of_change=datetime.now(), price_before=item.price,
-                                                   price_after=request.POST.get('price'), quantity_before=item.quantity,
-                                                   quantity_after=request.POST.get('quantity'))
+                                      price_after=request.POST.get('price'), quantity_before=item.quantity,
+                                      quantity_after=request.POST.get('quantity'))
             new_history.save()
         item.name = request.POST['name']
         item.description = request.POST['description']
@@ -238,6 +236,7 @@ def user_inventory_edit(request: HttpRequest, item_id=0, item_range=10) -> Union
         item.quantity = request.POST.get('quantity')
         item.save()
         return HttpResponseRedirect(USER_INVENTORY)
+    # filters item by range and user visibility.
     items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
     item_history = ItemHistory.objects.filter(
@@ -259,10 +258,10 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
     Returns:
         render : userHomeInsights.html.
     """
+    # Year-Month-Day
     date_pattern = re.compile("[\d]{4}-[\d]{2}-[\d]{2}")
     items = Item.objects.filter(id__range=(
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
-    item_history = str()
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         if request.POST and (request.POST.get('start_date_query') and request.POST.get('end_date_query')) and (date_pattern.match(request.POST.get('start_date_query')) is not None and date_pattern.match(request.POST.get('end_date_query')) is not None):
@@ -273,6 +272,7 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
                 start_date_query[1]), int(start_date_query[2]))
             end_date = datetime.datetime(int(end_date_query[0]), int(
                 end_date_query[1]), int(end_date_query[2]))
+            # if valid date range
             if (start_date < end_date):
                 item_history = ItemHistory.objects.filter(
                     item_id=item, date_of_change__gte=start_date, date_of_change__lte=end_date)
@@ -283,6 +283,7 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
             item_history = ItemHistory.objects.filter(
                 item_id=item).select_related()
         price_graph = quantity_graph = ''
+        # if there is more than one item history
         if len(item_history) > 1:
             date_change: List[date] = numpy.asarray([x.date_of_change.strftime(
                 '%m-%d %I:%M %p') for x in item_history if x.date_of_change])
@@ -333,7 +334,7 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
         (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
     if request.POST:
         print(request.POST)
-        user_visibility_list: List[str] = f'{user_visibility[0]},'
+        user_visibility_list: str = f'{user_visibility[0]},'
         for user in users:
             print(user)
             print(request.POST.get(str(user)))
@@ -343,7 +344,7 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
         print(user_visibility_list)
         item.save()
         return render(request, 'home/userHomeVisibility.html', {"username": str(request.user).title(), "items": items, "item_range": item_range,  "users": users, "msg": "Modification Successful"})
-    return render(request, 'home/userHomeVisibility.html', {"username": str(request.user).title(), "items": items, "item_id": item_id, "item_range": item_range, "item": item, "users": users, "msg": "Select an item to modify user visibility.", "item_msg": item_msg})
+    return render(request, 'home/userHomeVisibility.html', {"username": str(request.user).title(), "items": items, "item_range": item_range,  "users": users, "item_id": item_id, "item": item, "msg": "Select an item to modify user visibility.", "item_msg": item_msg})
 
 
 def clear_graph_history(username: str) -> None:
@@ -353,6 +354,7 @@ def clear_graph_history(username: str) -> None:
     Args:
         username (str): username of current user.
     """
+    # gets currentworking directory plus graph directory.
     path = os.path.join(os.path.dirname(__file__), 'static',
                         'home', 'temp', f'{username}')
     if os.path.exists(path):
