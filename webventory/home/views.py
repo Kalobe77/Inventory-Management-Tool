@@ -1,7 +1,7 @@
 import datetime
 import os
 import re
-from datetime import date
+from datetime import datetime
 from typing import List, Union
 
 import numpy as np
@@ -149,7 +149,7 @@ def create_item(request: HttpRequest) -> Union[render, HttpResponseRedirect]:
 
 
 @login_required(login_url='/login')
-def delete_item(request: HttpRequest, item_id=0) -> HttpResponseRedirect:
+def delete_item(request: HttpRequest, item_id=0, item_range=10) -> HttpResponseRedirect:
     """Inventory Home Page.
 
     Args:
@@ -162,8 +162,9 @@ def delete_item(request: HttpRequest, item_id=0) -> HttpResponseRedirect:
     does_item_exist = Item.objects.filter(id=item_id).exists()
     does_item_history_exist = ItemHistory.objects.filter(
         item_id=item_id).exists()
-    user_owns: List[str] = request.user in Item.objects.get(
-        id=item_id).user_visibility.split(',')
+    user_owns = bool(str(request.user) == Item.objects.get(
+        id=item_id).user_visibility[:Item.objects.get(
+            id=item_id).user_visibility.find(',')])
     if does_item_exist and user_owns:
         item_to_delete = Item.objects.get(id=item_id)
         item_to_delete.delete()
@@ -186,6 +187,8 @@ def user_inventory(request: HttpRequest, item_id=0, item_range=10) -> render:
     """
     clear_graph_history(request.user)
     total_assets = 0
+    all_items = Item.objects.filter(
+        user_visibility__contains=f'{request.user},').select_related()
     if (request.POST.get('search')):
         items = Item.objects.filter(
             name__contains=request.POST['search'], user_visibility__contains=f'{request.user},').select_related()
@@ -201,7 +204,7 @@ def user_inventory(request: HttpRequest, item_id=0, item_range=10) -> render:
         item_history = ItemHistory.objects.filter(
             item_id=item_id).select_related()
         total_item_worth = (item.price * item.quantity)
-    for item_iter in items:
+    for item_iter in all_items:
         total_assets += (item_iter.price * item_iter.quantity)
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
