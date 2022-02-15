@@ -4,7 +4,7 @@ import re
 from datetime import date
 from typing import List, Union
 
-import numpy
+import numpy as np
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
@@ -287,16 +287,25 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
         price_graph = quantity_graph = ''
         # if there is more than one item history
         if len(item_history) > 1:
-            date_change: List[date] = numpy.asarray([x.date_of_change.strftime(
-                '%m-%d %I:%M %p') for x in item_history if x.date_of_change])
+            date_change = np.array([], dtype=np.str)
+            price_change = np.array([], dtype=np.float32)
+            quantity_change = np.array([], dtype=np.int32)
+            print(quantity_change)
+            for item_iter in item_history:
+                if item_iter.date_of_change:
+                    date_change = np.append(date_change,
+                                            item_iter.date_of_change.strftime('%m-%d %I:%M %p'))
+                if item_iter.price_after:
+                    price_change = np.append(
+                        price_change, item_iter.price_after)
+                if item_iter.quantity_after:
+                    quantity_change = np.append(
+                        quantity_change, item_iter.quantity_after)
+            print(len(quantity_change), len(price_change), len(quantity_change))
             price_graph = f"home/temp/{request.user}/" + str(graph(
-                date_change,
-                numpy.asarray([y.price_after for y in item_history
-                               if y.price_after]), str(request.user), True))
+                np.asarray(date_change), np.asarray(price_change), str(request.user), True))
             quantity_graph = f"home/temp/{request.user}/" + str(graph(
-                date_change,
-                numpy.asarray([y.quantity_after for y in item_history if
-                               y.quantity_after]), str(request.user), False))
+                np.asarray(date_change), np.asarray(quantity_change), str(request.user), False))
         file_does_not_exist = False if price_graph else True
         return_dict.update({"price_graph": price_graph,
                             "quantity_graph": quantity_graph,
@@ -324,7 +333,7 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
     item = str()
     user_visibility = str()
     item_msg = str()
-    users = numpy.asarray([str(user) for user in User.objects.all()])
+    users = np.asarray([str(user) for user in User.objects.all()])
     if(item_id != 0):
         user_visibility = Item.objects.get(
             id=item_id).user_visibility.split(',')

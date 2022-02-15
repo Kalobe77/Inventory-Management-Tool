@@ -16,19 +16,19 @@
         {% if user.username in item.get_user_visibility %}
 
         <tr>
-            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}/{{item_range}}/">
                     {{ item.id }}
                 </a></td>
-            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}/{{item_range}}/">
                     {{ item.name }}
                 </a></td>
-            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}/{{item_range}}/">
                     {{ item.description }}
                 </a></td>
-            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}/{{item_range}}/">
                     {{ item.quantity }}
                 </a></td>
-            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}">
+            <td><a style="color: black" href="/{{rootPage}}/{{item.id}}/{{item_range}}/">
                     ${{ item.price|floatformat:2 }}
                 </a></td>
         </tr>
