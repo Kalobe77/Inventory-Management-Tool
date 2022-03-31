@@ -20,7 +20,6 @@ class Item(models.Model):
     description: str = models.CharField(max_length=100)
     quantity: int = models.IntegerField()
     price: float = models.DecimalField(max_digits=9, decimal_places=2)
-    user_visibility: str = models.TextField()
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               models.SET_NULL, blank=True, null=True)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL)

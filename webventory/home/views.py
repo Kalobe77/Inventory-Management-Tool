@@ -137,7 +137,8 @@ def create_item(request: HttpRequest) -> Union[render, HttpResponseRedirect]:
             name=request.POST['name'],
             description=request.POST['description'],
             price=request.POST['price'],
-            user_visibility=f'{request.user},',
+            users_username=f'{request.user.username}',
+            owner=request.user,
             quantity=request.POST.get('quantity'))
         item.save()
         return HttpResponseRedirect(USER_INVENTORY)
@@ -162,9 +163,8 @@ def delete_item(request: HttpRequest, item_id=0, item_range=10) -> HttpResponseR
     does_item_exist = Item.objects.filter(id=item_id).exists()
     does_item_history_exist = ItemHistory.objects.filter(
         item_id=item_id).exists()
-    user_owns = bool(str(request.user) == Item.objects.get(
-        id=item_id).user_visibility[:Item.objects.get(
-            id=item_id).user_visibility.find(',')])
+    user_owns = bool(str(request.user.username) == Item.objects.get(
+        id=item_id).user.username)
     if does_item_exist and user_owns:
         item_to_delete = Item.objects.get(id=item_id)
         item_to_delete.delete()
@@ -193,14 +193,14 @@ def user_inventory(request: HttpRequest, item_id=0, item_range=10, delError=0) -
         msg = "Could not Delete! Maybe you are not owner?"
     total_assets = 0
     all_items = Item.objects.filter(
-        user_visibility__contains=f'{request.user},').select_related()
+        users_username=f'{request.user.username}').select_related()
     if (request.POST.get('search')):
         items = Item.objects.filter(
-            name__contains=request.POST['search'], user_visibility__contains=f'{request.user},').select_related()
+            name__contains=request.POST['search'], users_username=f'{request.user.username}').select_related()
 
     else:
         items = Item.objects.filter(id__range=((item_range - 10), item_range),
-                                    user_visibility__contains=f'{request.user},').select_related()
+                                    users__username=f'{request.user.username}').select_related()
     item_history = str()
     item = None
     item_owner = None
@@ -210,7 +210,7 @@ def user_inventory(request: HttpRequest, item_id=0, item_range=10, delError=0) -
         item_history = ItemHistory.objects.filter(
             item_id=item_id).select_related()
         total_item_worth = (item.price * item.quantity)
-        item_owner = item.user_visibility[:item.user_visibility.find(',')]
+        item_owner = item.owner.username
     for item_iter in all_items:
         total_assets += (item_iter.price * item_iter.quantity)
     return render(request, 'home/userHomeInventory.html',
@@ -247,7 +247,7 @@ def user_inventory_edit(request: HttpRequest, item_id=0, item_range=10) -> Union
         return HttpResponseRedirect(USER_INVENTORY)
     # filters item by range and user visibility.
     items = Item.objects.filter(id__range=(
-        (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
+        (item_range - 10), item_range), users_username=f'{request.user.username}').select_related()
     item_history = ItemHistory.objects.filter(
         item_id=item).select_related()
     return render(request, 'home/userHomeInventoryEdit.html',
@@ -270,7 +270,7 @@ def user_insights(request: HttpRequest, item_id=0, item_range=10) -> render:
     # Year-Month-Day
     date_pattern = re.compile("[\d]{4}-[\d]{2}-[\d]{2}")
     items = Item.objects.filter(id__range=(
-        (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
+        (item_range - 10), item_range), users_username=f'{request.user.username}').select_related()
     # html template variables
     return_dict = {"username": str(request.user).title(), "items": items, "item_id": item_id,
                    "item_range": item_range, }
@@ -341,16 +341,15 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
     """
 
     item = str()
-    user_visibility = str()
     item_msg = str()
-    users = np.asarray([str(user) for user in User.objects.all()])
+    users = np.asarray([user for user in User.objects.all()])
     if(item_id != 0):
-        user_visibility = Item.objects.get(
-            id=item_id).user_visibility.split(',')
+        user_visibility = np.asarray([user.username for user in Item.objects.get(
+            id=item_id).users.all()])
         item = Item.objects.get(id=item_id)
         item_msg = item.name + " Visibility Settings"
     items = Item.objects.filter(id__range=(
-        (item_range - 10), item_range), user_visibility__contains=f'{request.user},').select_related()
+        (item_range - 10), item_range), users_username=f'{request.user.username}').select_related()
     return_dict = {"username": str(request.user).title(
     ), "items": items, "item_range": item_range, "users": users}
     if request.POST:
@@ -361,7 +360,7 @@ def user_users(request: HttpRequest, item_id=0, item_range=10) -> render:
             print(request.POST.get(str(user)))
             if request.POST.get(f'{user}') and f'{user}' not in user_visibility_list:
                 user_visibility_list += f'{user},'
-        item.user_visibility = user_visibility_list
+                item.users.create(user)
         print(user_visibility_list)
         item.save()
         return_dict.update({"msg": "Modification Successful"})
