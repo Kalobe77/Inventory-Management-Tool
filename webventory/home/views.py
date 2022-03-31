@@ -172,11 +172,13 @@ def delete_item(request: HttpRequest, item_id=0, item_range=10) -> HttpResponseR
             item_history_delete = ItemHistory.objects.filter(
                 item_id=item_id).select_related()
             item_history_delete.delete()
-    return HttpResponseRedirect(USER_INVENTORY)
+            return HttpResponseRedirect(USER_INVENTORY)
+    else:
+        return HttpResponseRedirect(USER_INVENTORY + '/deleteError/1')
 
 
 @login_required(login_url='/login')
-def user_inventory(request: HttpRequest, item_id=0, item_range=10) -> render:
+def user_inventory(request: HttpRequest, item_id=0, item_range=10, delError=0) -> render:
     """Creates an inventory item.
 
     Args:
@@ -186,6 +188,9 @@ def user_inventory(request: HttpRequest, item_id=0, item_range=10) -> render:
         [type]: userHomeInventory.html with username, item, items, and item_history.
     """
     clear_graph_history(request.user)
+    msg = "Select an item to view more detailed information."
+    if delError == 1:
+        msg = "Could not Delete! Maybe you are not owner?"
     total_assets = 0
     all_items = Item.objects.filter(
         user_visibility__contains=f'{request.user},').select_related()
@@ -198,18 +203,20 @@ def user_inventory(request: HttpRequest, item_id=0, item_range=10) -> render:
                                     user_visibility__contains=f'{request.user},').select_related()
     item_history = str()
     item = None
+    item_owner = None
     total_item_worth = 0
     if item_id != 0:
         item = Item.objects.get(id=item_id)
         item_history = ItemHistory.objects.filter(
             item_id=item_id).select_related()
         total_item_worth = (item.price * item.quantity)
+        item_owner = item.user_visibility[:item.user_visibility.find(',')]
     for item_iter in all_items:
         total_assets += (item_iter.price * item_iter.quantity)
     return render(request, 'home/userHomeInventory.html',
                   {"username": str(request.user).title(), "item": item, "items": items, "itemHistories": item_history,
                    'item_range': item_range, 'item_id': item_id,
-                   'total_item_worth': total_item_worth, 'total_assets': total_assets})
+                   'total_item_worth': total_item_worth, 'total_assets': total_assets, "msg": msg, "item_owner": item_owner})
 
 
 @login_required(login_url='/login')
