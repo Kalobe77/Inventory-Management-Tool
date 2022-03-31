@@ -1,7 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from typing import List
 from datetime import date
+from django.conf import settings
 # Create your models here.
 
 
@@ -20,6 +21,9 @@ class Item(models.Model):
     quantity: int = models.IntegerField()
     price: float = models.DecimalField(max_digits=9, decimal_places=2)
     user_visibility: str = models.TextField()
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              models.SET_NULL, blank=True, null=True)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
     def __str__(self) -> str:
         return " ".join([str(self.name).title(), f"({str(self.id)})"])
