@@ -138,7 +138,8 @@ def create_item(request: HttpRequest) -> Union[render, HttpResponseRedirect]:
             description=request.POST['description'],
             price=request.POST['price'],
             user_visibility=f'{request.user},',
-            quantity=request.POST.get('quantity'))
+            quantity=request.POST.get('quantity'),
+            owner = request.user)
         item.save()
         return HttpResponseRedirect(USER_INVENTORY)
 

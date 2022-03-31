@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from typing import List
 from datetime import date
 # Create your models here.
@@ -20,6 +20,8 @@ class Item(models.Model):
     quantity: int = models.IntegerField()
     price: float = models.DecimalField(max_digits=9, decimal_places=2)
     user_visibility: str = models.TextField()
+    owner: User = models.ForeignKey(
+        User, models.SET_NULL, blank=True, null=True)
 
     def __str__(self) -> str:
         return " ".join([str(self.name).title(), f"({str(self.id)})"])
@@ -28,7 +30,7 @@ class Item(models.Model):
         return self.user_visibility.split(',')
 
     def owner(self) -> str:
-        return self.user_visibility.split(',')[0]
+        return self.owner.username
 
 
 class User(AbstractUser):
@@ -73,3 +75,8 @@ class ItemHistory(models.Model):
     def __str__(self) -> str:
         return " ".join([str(self.item_id.name), "Change:", "on",
                          str(self.date_of_change)])
+
+
+class Permissions(models.Model):
+    id = models.ForeignKey(Item, models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
