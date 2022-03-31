@@ -29,7 +29,6 @@ urlpatterns = [
     path('logout', views.user_logout),
     # Inventory page.
     path('userInventory/', views.user_inventory),
-    path('userInventory/deleteError/<int:delError>', views.user_inventory),
     # Inventory Insights page.
     path('userInsights/', views.user_insights),
     path('userInsights/<int:item_id>/', views.user_insights),
